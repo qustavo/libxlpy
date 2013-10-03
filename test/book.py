@@ -92,6 +92,18 @@ class TestBook(unittest.TestCase):
         (t, img) = self.book.getPicture(index)
         self.assertEqual(0, t)
 
+    def test_defaultFont(self):
+        (name, size) = self.book.defaultFont()
+        self.assertIsInstance(name, str)
+        self.assertIsInstance(size, int)
+
+    def test_setDefaultFont(self):
+        name, size = "Mono", 14
+        self.book.setDefaultFont(name, size)
+        self.assertEqual(
+                self.book.defaultFont(),
+                (name, size))
+
     def test_setKey(self):
         self.assertIsNone( self.book.setKey("foo", "bar") )
 

@@ -228,6 +228,28 @@ add_picture(XLPyBook *self, PyObject *args)
 }
 
 static PyObject *
+default_font(XLPyBook *self)
+{
+    const char *name;
+    int size;
+    name = xlBookDefaultFont(self->handler, &size);
+    if(!name) Py_RETURN_NONE;
+    return Py_BuildValue("(si)", name, size);
+}
+
+static PyObject *
+set_default_font(XLPyBook *self, PyObject *args)
+{
+    const char *name;
+    int size;
+    if(!PyArg_ParseTuple(args, "si", &name, &size)) return NULL;
+
+    xlBookSetDefaultFont(self->handler, name, size);
+    Py_RETURN_NONE;
+}
+
+
+static PyObject *
 set_key(XLPyBook *self, PyObject *args)
 {
 	const char *name, *key;
@@ -300,6 +322,11 @@ static PyMethodDef methods[] = {
 		"Returns a number of pictures in this workbook."},
 	{"getPicture", (PyCFunction) get_picture, METH_VARARGS,
 		"Returns a tuple with type of picture and picture buffer"},
+    {"defaultFont", (PyCFunction) default_font, METH_NOARGS,
+        "Returns a tuple with default font name and size for this workbook. "
+        "Returns None if error occurs."},
+    {"setDefaultFont", (PyCFunction) set_default_font, METH_VARARGS,
+        "Sets a default font name and size for this workbook."},
 	{"setKey", (PyCFunction) set_key, METH_VARARGS,
 		"Sets customer's license key."},
 	{"setLocale", (PyCFunction) set_locale, METH_VARARGS,

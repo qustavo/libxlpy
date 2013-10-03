@@ -16,6 +16,25 @@ dealloc(XLPySheet *self)
 }
 
 static PyObject *
+cell_type(XLPySheet *self, PyObject *args)
+{
+    int row, col;
+    if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+    return Py_BuildValue("i",
+            xlSheetCellType(self->handler, row, col));
+}
+
+static PyObject *
+is_formula(XLPySheet *self, PyObject *args)
+{
+    int row, col;
+    if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+    if (xlSheetIsFormula(self->handler, row, col))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
 write_str(XLPySheet *self, PyObject *args)
 {
 	int row, col;
@@ -56,7 +75,43 @@ set_name(XLPySheet *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+static PyObject *
+set_picture(XLPySheet *self, PyObject *args)
+{
+    int row, col, pictureId;
+    double scale;
+    int offset_x, offset_y;
+    if(!PyArg_ParseTuple(args, "iiidii",
+                &row, &col, &pictureId, &scale, &offset_x, &offset_y)) {
+        return NULL;
+    }
+
+    xlSheetSetPicture(self->handler, row, col,
+            pictureId, scale, offset_x, offset_y);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+set_picture_2(XLPySheet *self, PyObject *args)
+{
+    int row, col, pictureId;
+    int width, height;
+    int offset_x, offset_y;
+    if(!PyArg_ParseTuple(args, "iiiiiii", &row, &col, &pictureId,
+                &width, &height, &offset_x, &offset_y)) {
+        return NULL;
+    }
+
+    xlSheetSetPicture2(self->handler, row, col,
+            pictureId, width, height, offset_x, offset_y);
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef methods[] = {
+    {"cellType", (PyCFunction) cell_type, METH_VARARGS,
+        "Returns cell's type."},
+    {"isFormula", (PyCFunction) is_formula, METH_VARARGS,
+        "Checks that cell contains a formula."},
 	{"writeStr", (PyCFunction) write_str, METH_VARARGS,
 		"Writes a string into cell with specified format (if present). Returns False if error occurs."},
 	{"setMerge", (PyCFunction) set_merge, METH_VARARGS,
@@ -64,6 +119,12 @@ static PyMethodDef methods[] = {
 		"Returns False if error occurs."},
     {"setName", (PyCFunction) set_name, METH_VARARGS,
         "Sets the name of the sheet."},
+    {"setPicture", (PyCFunction) set_picture, METH_VARARGS,
+        "Sets a picture with pictureId identifier at position row and col with scale factor and offsets in pixels. "
+        "Use Book::addPicture() for getting picture identifier."},
+    {"setPicture2", (PyCFunction) set_picture_2, METH_VARARGS,
+        "Sets a picture with pictureId identifier at position row and col with custom size and offsets in pixels. "
+        "Use Book::addPicture() for getting a picture identifier."},
 	{NULL}
 };
 

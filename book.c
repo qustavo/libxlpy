@@ -190,6 +190,15 @@ active_sheet(XLPyBook *self)
 }
 
 static PyObject *
+add_picture(XLPyBook *self, PyObject *args)
+{
+	const char *filename;
+	if(!PyArg_ParseTuple(args, "s", &filename)) return NULL;
+	return Py_BuildValue("i",
+			xlBookAddPicture(self->handler, filename));
+}
+
+static PyObject *
 set_active_sheet(XLPyBook *self, PyObject *args)
 {
 	int num;
@@ -267,6 +276,11 @@ static PyMethodDef methods[] = {
 		"Returns a number of formats in this book."},
 	{"activeSheet", (PyCFunction) active_sheet, METH_NOARGS,
 		"Returns an active sheet index in this workbook."},
+	{"addPicture", (PyCFunction) add_picture, METH_VARARGS,
+		"Adds a picture to the workbook. Returns a picture identifier. "
+		"Supports BMP, DIB, PNG, JPG and WMF picture formats. "
+		"Use picture identifier with Sheet::SetPicture(). "
+		"Returns -1 if error occurs. "},
 	{"setActiveSheet", (PyCFunction) set_active_sheet, METH_VARARGS,
 		"Sets an active sheet index in this workbook."},
 	{"pictureSize", (PyCFunction) picture_size, METH_NOARGS,

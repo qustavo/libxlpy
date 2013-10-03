@@ -248,6 +248,96 @@ set_default_font(XLPyBook *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+static PyObject *
+date_pack(XLPyBook *self, PyObject *args)
+{
+    int year, month, day, hour, min, sec, msec;
+    if(!PyArg_ParseTuple(args, "iiiiiii",
+                &year, &month, &day, &hour, &min, &sec, &msec)) {
+        return NULL;
+    }
+
+    double pack = xlBookDatePack(self->handler,
+            year, month, day, hour, min, sec, msec);
+    return Py_BuildValue("d", pack);
+}
+
+static PyObject *
+date_unpack(XLPyBook *self, PyObject *args)
+{
+    double pack;
+    if(!PyArg_ParseTuple(args, "d", &pack)) return NULL;
+
+    int year, month, day, hour, min, sec, msec;
+    if(0 == xlBookDateUnpack(self->handler, pack,
+            &year, &month, &day, &hour, &min, &sec, &msec)) {
+        Py_RETURN_NONE;
+    }
+
+    return Py_BuildValue("(iiiiiii)",
+            year, month, day, hour, min, sec, msec);
+}
+
+static PyObject *
+color_pack(XLPyBook *self, PyObject *args)
+{
+    int r, g, b;
+    if(!PyArg_ParseTuple(args, "iii", &r, &g, &b)) return NULL;
+    return Py_BuildValue("i", xlBookColorPack(self->handler, r, g, b));
+}
+
+static PyObject *
+color_unpack(XLPyBook *self, PyObject *args)
+{
+    int color;
+    if(!PyArg_ParseTuple(args, "i", &color)) return NULL;
+
+    int r, g, b;
+    xlBookColorUnpack(self->handler, color, &r, &g, &b);
+    return Py_BuildValue("(iii)", r, g, b);
+}
+
+static PyObject *
+rgb_mode(XLPyBook *self)
+{
+    if(xlBookRgbMode(self->handler))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_rgb_mode(XLPyBook *self, PyObject *args)
+{
+    PyObject *val = NULL;
+    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) return NULL;
+    xlBookSetRgbMode(self->handler, PyObject_IsTrue(val) ? 1 : 0);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+biff_version(XLPyBook *self)
+{
+    return Py_BuildValue("i", xlBookBiffVersion(self->handler));
+}
+
+/*
+static PyObject *
+is_date_1904(XLPyBook *self)
+{
+    if(xlBookIsDate1904(self->handler))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_date_1904(XLPyBook *self, PyObject *args)
+{
+    int value;
+    if(!PyArg_ParseTuple(args, "i", &value)) return NULL;
+    xlBookIsDate1904(self->handler, value);
+    Py_RETURN_NONE;
+}
+*/
 
 static PyObject *
 set_key(XLPyBook *self, PyObject *args)
@@ -327,6 +417,31 @@ static PyMethodDef methods[] = {
         "Returns None if error occurs."},
     {"setDefaultFont", (PyCFunction) set_default_font, METH_VARARGS,
         "Sets a default font name and size for this workbook."},
+    {"datePack", (PyCFunction) date_pack, METH_VARARGS,
+        "Packs date and time information into float type."},
+    {"dateUnpack", (PyCFunction) date_unpack, METH_VARARGS,
+        "Unpacks date and time information from float type. Returns None if error occurs."},
+    {"colorPack", (PyCFunction) color_pack, METH_VARARGS,
+        "Packs red, green and blue components in color value."},
+    {"colorUnpack", (PyCFunction) color_unpack, METH_VARARGS,
+        "Unpacks color value to red, green and blue components."},
+    {"rgbMode", (PyCFunction) rgb_mode, METH_NOARGS,
+        "Returns whether the RGB mode is active: "
+        "True - RGB mode, False - Index mode."},
+    {"setRgbMode", (PyCFunction) set_rgb_mode, METH_VARARGS,
+        "Sets a RGB mode: True - RGB mode, False - Index mode (default). "
+        "In RGB mode use Book::ColorPack() and Book::ColorUnpack() functions for getting/setting colors."},
+    {"biffVersion", (PyCFunction) biff_version, METH_NOARGS,
+        "Returns BIFF version of binary file. Used for xls format only."},
+    /*
+    {"isDate1904", (PyCFunction) is_date_1904, METH_NOARGS,
+        "Returns whether the 1904 date system is active: "
+        "True - 1904 date system, False - 1900 date system."},
+    {"setDate1904", (PyCFunction) set_date_1904, METH_NOARGS,
+        "Sets the date system mode: True - 1904 date system, False - 1900 date system (default). "
+        "In the 1900 date base system, the lower limit is January 1, 1900, which has serial value 1. "
+        "In the 1904 date base system, the lower limit is January 1, 1904, which has serial value 0."},
+    */
 	{"setKey", (PyCFunction) set_key, METH_VARARGS,
 		"Sets customer's license key."},
 	{"setLocale", (PyCFunction) set_locale, METH_VARARGS,

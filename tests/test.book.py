@@ -104,6 +104,63 @@ class TestBook(unittest.TestCase):
                 self.book.defaultFont(),
                 (name, size))
 
+    def test_datePack(self):
+        self.assertIsInstance(
+                self.book.datePack(2000, 1, 1, 1, 0, 0, 0), float)
+
+    def test_dateUnpack(self):
+        pack = self.book.datePack(2000, 1, 1, 1, 0, 0, 0)
+        unpack = self.book.dateUnpack(pack)
+        self.assertEqual(unpack,
+                (2000, 1, 1, 1, 0, 0, 0))
+
+    def test_colorPack(self):
+        self.assertIsInstance(
+                self.book.colorPack(0, 0, 0), int)
+
+    def test_colorUnpack(self):
+        r, g, b = 0, 127, 255
+        pack = self.book.colorPack(r, g, b)
+        unpack = self.book.colorUnpack(pack)
+        self.assertEqual(unpack, (r,g,b))
+
+    @unittest.skip("Not available on libxl")
+    def test_refR1C1(self):
+        self.assertTrue(self.book.refR1C1())
+
+    @unittest.skip("Not available on libxl")
+    def test_setRefR1C1(self):
+        self.book.setRefR1C1(True)
+        self.assertTrue(self.book.refR1C1())
+
+        self.book.setRefR1C1(False)
+        self.assertFalse(self.book.refR1C1())
+
+    def test_rgbMode(self):
+        self.assertFalse(self.book.rgbMode())
+
+    def test_setRgbMode(self):
+        self.book.setRgbMode(True)
+        self.assertTrue(self.book.rgbMode())
+        
+        self.book.setRgbMode(False)
+        self.assertFalse(self.book.rgbMode())
+
+    def test_biffVersion(self):
+        self.assertIsInstance(self.book.biffVersion(), int)
+
+    @unittest.skip("Not available on libxl")
+    def test_IsDate1904(self):
+        self.assertFalse(self.book.isDate1904())
+
+    @unittest.skip("Not available on libxl")
+    def test_setDate1904(self):
+        self.assertIsNone(self.book.setDate1904(1))
+        self.assertTrue(self.book.isDate1904())
+        
+        self.assertIsNone(self.book.setDate1904(0))
+        self.assertFalse(self.book.isDate1904())
+
     def test_setKey(self):
         self.assertIsNone( self.book.setKey("foo", "bar") )
 

@@ -185,17 +185,7 @@ format_size(XLPyBook *self)
 static PyObject *
 active_sheet(XLPyBook *self)
 {
-	return Py_BuildValue("i",
-			xlBookActiveSheet(self->handler));
-}
-
-static PyObject *
-add_picture(XLPyBook *self, PyObject *args)
-{
-	const char *filename;
-	if(!PyArg_ParseTuple(args, "s", &filename)) return NULL;
-	return Py_BuildValue("i",
-			xlBookAddPicture(self->handler, filename));
+	return Py_BuildValue("i", xlBookActiveSheet(self->handler));
 }
 
 static PyObject *
@@ -212,6 +202,29 @@ picture_size(XLPyBook *self, PyObject *args)
 {
 	return Py_BuildValue("i",
 			xlBookPictureSize(self->handler));
+}
+
+static PyObject *
+get_picture(XLPyBook *self, PyObject *args)
+{
+	int index;
+	if(!PyArg_ParseTuple(args, "i", &index)) return NULL;
+
+	const char *data;
+	unsigned size;
+	int type = xlBookGetPicture(self->handler, index, &data, &size);
+	if (-1 == type) Py_RETURN_NONE;
+
+	return Py_BuildValue("[is#]", type, data, size);
+}
+
+static PyObject *
+add_picture(XLPyBook *self, PyObject *args)
+{
+	const char *filename;
+	if(!PyArg_ParseTuple(args, "s", &filename)) return NULL;
+	return Py_BuildValue("i",
+			xlBookAddPicture(self->handler, filename));
 }
 
 static PyObject *
@@ -285,6 +298,8 @@ static PyMethodDef methods[] = {
 		"Sets an active sheet index in this workbook."},
 	{"pictureSize", (PyCFunction) picture_size, METH_NOARGS,
 		"Returns a number of pictures in this workbook."},
+	{"getPicture", (PyCFunction) get_picture, METH_VARARGS,
+		"Returns a tuple with type of picture and picture buffer"},
 	{"setKey", (PyCFunction) set_key, METH_VARARGS,
 		"Sets customer's license key."},
 	{"setLocale", (PyCFunction) set_locale, METH_VARARGS,

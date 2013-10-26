@@ -48,10 +48,6 @@ class TestBook(unittest.TestCase):
         self.book.addSheet('foo')
         self.assertEqual(1, self.book.sheetCount())
 
-    def test_format(self):
-        fmt = self.book.format(0)
-        self.assertEqual('XLPyFormat', type(fmt).__name__)
-
     def test_addFormat(self):
         fmt = self.book.addFormat()
         self.assertEqual('XLPyFormat', type(fmt).__name__)
@@ -59,6 +55,21 @@ class TestBook(unittest.TestCase):
     def test_addFont(self):
         fnt = self.book.addFont()
         self.assertEqual('XLPyFont', type(fnt).__name__)
+   
+    def test_addCustomNumFormat(self):
+        index = self.book.addCustomNumFormat("fmt");
+        self.assertIsNotNone(index)
+
+        self.assertEqual('fmt',
+                self.book.customNumFormat(index))
+
+    def test_customNumFormat(self):
+        self.assertIsNone(
+                self.book.customNumFormat(0))
+
+    def test_format(self):
+        fmt = self.book.format(0)
+        self.assertEqual('XLPyFormat', type(fmt).__name__)
 
     def test_formatSize(self):
         num = self.book.formatSize()
@@ -74,10 +85,6 @@ class TestBook(unittest.TestCase):
         sheet = self.book.addSheet('foo')
         self.book.setActiveSheet(1)
         self.assertEqual(1, self.book.activeSheet())
-
-    def test_addPicture(self):
-        index = self.book.addPicture("./logo.png")
-        self.assertEqual(0, index)
 
     def test_pictureSize(self):
         self.assertEqual(0, self.book.pictureSize())
@@ -104,6 +111,18 @@ class TestBook(unittest.TestCase):
                 self.book.defaultFont(),
                 (name, size))
 
+    def test_font(self):
+        font = self.book.font(0)
+        self.assertEqual('XLPyFont', type(font).__name__)
+        
+        font = self.book.font(999) # invalid font index
+        self.assertIsNone(font)
+
+    def test_fontSize(self):
+        # default value
+        self.assertEqual(5,
+                self.book.fontSize())
+
     def test_datePack(self):
         self.assertIsInstance(
                 self.book.datePack(2000, 1, 1, 1, 0, 0, 0), float)
@@ -124,11 +143,22 @@ class TestBook(unittest.TestCase):
         unpack = self.book.colorUnpack(pack)
         self.assertEqual(unpack, (r,g,b))
 
-    @unittest.skip("Not available on libxl")
-    def test_refR1C1(self):
-        self.assertTrue(self.book.refR1C1())
+    def test_addPicture(self):
+        index = self.book.addPicture("./logo.png")
+        self.assertEqual(0, index)
 
-    @unittest.skip("Not available on libxl")
+    def test_addPicture2(self):
+        f = open('./logo.png')
+        index = self.book.addPicture2(f.read())
+        self.assertEqual(0, index)
+        self.assertEqual('ok', self.book.errorMessage())
+
+        self.book.addPicture2('invalid image data')
+        self.assertEqual('unknown picture format', self.book.errorMessage())
+
+    def test_refR1C1(self):
+        self.assertFalse(self.book.refR1C1())
+
     def test_setRefR1C1(self):
         self.book.setRefR1C1(True)
         self.assertTrue(self.book.refR1C1())

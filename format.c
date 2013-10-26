@@ -22,9 +22,22 @@ num_format(XLPyFormat *self)
             xlFormatNumFormat(self->handler));
 }
 
+static PyObject *
+set_num_format(XLPyFormat *self, PyObject *args)
+{
+	int num;
+	PyArg_ParseTuple(args, "i", &num);
+	xlFormatSetNumFormat(self->handler, num);
+	Py_RETURN_NONE;
+}
+
 static PyMethodDef methods[] = {
     {"numFormat", (PyCFunction) num_format, METH_NOARGS,
         "Returns the number format identifier."},
+	{"setNumFormat", (PyCFunction) set_num_format, METH_VARARGS,
+		"Sets the number format identifier. "
+		"The identifier must be a valid built-in number format identifier or the identifier of a custom number format. "
+		"To create a custom format use Book::AddCustomNumFormat()"},
 	{NULL}
 };
 

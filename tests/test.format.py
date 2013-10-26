@@ -9,5 +9,8 @@ class TestFormat(unittest.TestCase):
     def test_numFormat(self):
         self.assertEqual(0, self.format.numFormat())
 
+    def test_setNumFormat(self):
+        pass
+
 if __name__ == '__main__':
     unittest.main()

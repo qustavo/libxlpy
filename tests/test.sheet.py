@@ -24,6 +24,16 @@ class TestSheet(unittest.TestCase):
         self.assertTrue(
                 self.sheet.writeStr(1, 0, "Hello World"))
 
+    def test_writeNum(self):
+        self.assertTrue(
+                self.sheet.writeNum(1, 1, 20.0))
+
+        self.assertTrue(
+                self.sheet.writeNum(1, 1, 20))
+
+        with self.assertRaises(TypeError):
+            self.sheet.writeNum(1, 1, "twenty")
+
     def test_setMerge(self):
         self.assertTrue(
                 self.sheet.setMerge(0, 0, 3, 3))

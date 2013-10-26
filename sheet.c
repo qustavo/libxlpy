@@ -50,6 +50,21 @@ write_str(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+write_num(XLPySheet *self, PyObject *args)
+{
+	int row, col;
+	double val;
+	if(!PyArg_ParseTuple(args, "iid", &row, &col, &val)) {
+		return NULL;
+	}
+
+	if (!xlSheetWriteNum(self->handler, row, col, val, 0)) {
+		Py_RETURN_FALSE;
+	}
+	Py_RETURN_TRUE;
+}
+
+static PyObject *
 set_merge(XLPySheet *self, PyObject *args)
 {
 	int rowFirst, rowLast, colFirst, colLast;
@@ -114,6 +129,10 @@ static PyMethodDef methods[] = {
         "Checks that cell contains a formula."},
 	{"writeStr", (PyCFunction) write_str, METH_VARARGS,
 		"Writes a string into cell with specified format (if present). Returns False if error occurs."},
+    {"writeNum", (PyCFunction) write_num, METH_VARARGS,
+        "Writes a string into cell with specified format. "
+        "If format is not present then format is ignored. "
+        "Returns False if error occurs."},
 	{"setMerge", (PyCFunction) set_merge, METH_VARARGS,
 		"Sets merged cells for range: rowFirst - rowLast, colFirst - colLast. "
 		"Returns False if error occurs."},

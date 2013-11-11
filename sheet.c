@@ -389,6 +389,21 @@ set_col_hidden(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+get_merge(XLPySheet *self, PyObject *args)
+{
+	int row, col;
+	if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+
+	int rowFirst, rowLast, colFirst, colLast;
+	if(!xlSheetGetMerge(self->handler, row, col, &rowFirst, &rowLast, &colFirst,
+		&colLast)) {
+		Py_RETURN_NONE;
+	}
+
+	return Py_BuildValue("(iiii)", rowFirst, rowLast, colFirst, colLast);
+}
+
+static PyObject *
 set_merge(XLPySheet *self, PyObject *args)
 {
 	int rowFirst, rowLast, colFirst, colLast;
@@ -400,6 +415,17 @@ set_merge(XLPySheet *self, PyObject *args)
 		Py_RETURN_TRUE;
 	}
 	Py_RETURN_FALSE;
+}
+
+static PyObject *
+del_merge(XLPySheet *self, PyObject *args)
+{
+	int row, col;
+	if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+
+	if(!xlSheetDelMerge(self->handler, row, col))
+		Py_RETURN_FALSE;
+	Py_RETURN_TRUE;
 }
 
 static PyObject *
@@ -522,9 +548,15 @@ static PyMethodDef methods[] = {
 		"Returns whether col is hidden."},
 	{"setColHidden", (PyCFunction) set_col_hidden, METH_VARARGS,
 		"Hides col."},
+	{"getMerge", (PyCFunction) get_merge, METH_VARARGS,
+		"Gets merged cells for cell at row, col. "
+		"Result is a tuple of rowFirst, rowLast, colFirst, colLast. "
+		"Returns None if error occurs."},
 	{"setMerge", (PyCFunction) set_merge, METH_VARARGS,
 		"Sets merged cells for range: rowFirst - rowLast, colFirst - colLast. "
 		"Returns False if error occurs."},
+	{"delMerge", (PyCFunction) del_merge, METH_VARARGS,
+		"Removes merged cells. Returns False if error occurs."},
     {"setName", (PyCFunction) set_name, METH_VARARGS,
         "Sets the name of the sheet."},
     {"setPicture", (PyCFunction) set_picture, METH_VARARGS,

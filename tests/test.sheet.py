@@ -166,9 +166,27 @@ class TestSheet(unittest.TestCase):
         self.sheet.setColHidden(1, False)
         self.assertFalse(self.sheet.colHidden(1))
 
+    def test_getMerge(self):
+        self.assertEqual(
+            (0, 0, 0, 255),
+            self.sheet.getMerge(0, 0)
+        )
+        self.assertIsNone(self.sheet.getMerge(1, 1))
+
     def test_setMerge(self):
-        self.assertTrue(self.sheet.setMerge(0, 0, 3, 3))
+        self.assertTrue(self.sheet.setMerge(3, 3, 3, 3))
+        self.assertEqual(
+            (3, 3, 3, 3),
+            self.sheet.getMerge(3, 3)
+        )
         self.assertFalse(self.sheet.setMerge(0, 0, -3, -3))
+
+    def test_delMerge(self):
+        self.sheet.setMerge(3, 3, 5, 5)
+
+        self.assertIsNotNone(self.sheet.getMerge(3, 5))
+        self.sheet.delMerge(3, 5)
+        self.assertIsNone(self.sheet.getMerge(3, 5))
 
     def test_setName(self):
         self.assertIsNone(self.sheet.setName('foo'))

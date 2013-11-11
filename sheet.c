@@ -483,7 +483,55 @@ set_picture_2(XLPySheet *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+static PyObject *
+get_hor_page_break(XLPySheet *self, PyObject *args)
+{
+	int index;
+	if(!PyArg_ParseTuple(args, "i", &index)) return NULL;
+	return Py_BuildValue("i", xlSheetGetHorPageBreak(self->handler, index));
+}
 
+static PyObject *
+get_hor_page_break_size(XLPySheet *self)
+{
+	return Py_BuildValue("i", xlSheetGetHorPageBreakSize(self->handler));
+}
+
+static PyObject *
+get_ver_page_break(XLPySheet *self, PyObject *args)
+{
+	int index;
+	if(!PyArg_ParseTuple(args, "i", &index)) return NULL;
+	return Py_BuildValue("i", xlSheetGetVerPageBreak(self->handler, index));
+}
+
+static PyObject *
+get_ver_page_break_size(XLPySheet *self)
+{
+	return Py_BuildValue("i", xlSheetGetVerPageBreakSize(self->handler));
+}
+
+static PyObject *
+set_hor_page_break(XLPySheet *self, PyObject *args)
+{
+	int row, pageBreak;
+	if(!PyArg_ParseTuple(args, "ii", &row, &pageBreak)) return NULL;
+
+	if(!xlSheetSetHorPageBreak(self->handler, row, pageBreak))
+		Py_RETURN_FALSE;
+	Py_RETURN_TRUE;
+}
+
+static PyObject *
+set_ver_page_break(XLPySheet *self, PyObject *args)
+{
+	int col, pageBreak;
+	if(!PyArg_ParseTuple(args, "ii", &col, &pageBreak)) return NULL;
+
+	if(!xlSheetSetVerPageBreak(self->handler, col, pageBreak))
+		Py_RETURN_FALSE;
+	Py_RETURN_TRUE;
+}
 
 static PyObject *
 set_name(XLPySheet *self, PyObject *args)
@@ -601,6 +649,20 @@ static PyMethodDef methods[] = {
     {"setPicture2", (PyCFunction) set_picture_2, METH_VARARGS,
         "Sets a picture with pictureId identifier at position row and col with custom size and offsets in pixels. "
         "Use Book::addPicture() for getting a picture identifier."},
+    {"getHorPageBreak", (PyCFunction) get_hor_page_break, METH_VARARGS,
+    	"Returns row with horizontal page break at position index."},
+    {"getHorPageBreakSize", (PyCFunction) get_hor_page_break_size, METH_NOARGS,
+    	"Returns a number of horizontal page breaks in the sheet."},
+    {"getVerPageBreak", (PyCFunction) get_ver_page_break, METH_VARARGS,
+    	"Returns column with vertical page break at position index."},
+    {"getVerPageBreakSize", (PyCFunction) get_ver_page_break_size, METH_NOARGS,
+    	"Returns a number of vertical page breaks in the sheet."},
+    {"setHorPageBreak", (PyCFunction) set_hor_page_break, METH_VARARGS,
+    	"Sets/removes a horizontal page break (sets if True, removes if False). "
+    	"Returns False if error occurs."},
+    {"setVerPageBreak", (PyCFunction) set_ver_page_break, METH_VARARGS,
+    	"Sets/removes a vertical page break (sets if True, removes if False). "
+    	"Returns False if error occurs."},
     {"setName", (PyCFunction) set_name, METH_VARARGS,
         "Sets the name of the sheet."},
 	{NULL}

@@ -208,6 +208,28 @@ class TestSheet(unittest.TestCase):
         self.assertIsNone(self.sheet.setPicture2(0, 0, img, 100, 100, 0, 0))
         self.assertEqual(1, self.sheet.pictureSize())
 
+    def test_getHorPageBreak(self):
+        self.assertEqual(-1, self.sheet.getHorPageBreak(0))
+
+    def test_getHorPageBreakSize(self):
+        self.assertEqual(0, self.sheet.getHorPageBreakSize())
+
+    def test_getVerPageBreak(self):
+        self.assertEqual(-1, self.sheet.getVerPageBreak(0))
+
+    def test_getVerPageBreakSize(self):
+        self.assertEqual(0, self.sheet.getVerPageBreakSize())
+
+    def test_setHorPageBreak(self):
+        self.assertEqual(0, self.sheet.getHorPageBreakSize())
+        self.sheet.setHorPageBreak(1, True)
+        self.assertEqual(1, self.sheet.getHorPageBreakSize())
+
+    def test_setVerPageBreak(self):
+        self.assertEqual(0, self.sheet.getVerPageBreakSize())
+        self.sheet.setVerPageBreak(1, True)
+        self.assertEqual(1, self.sheet.getVerPageBreakSize())
+
     def test_setName(self):
         self.assertIsNone(self.sheet.setName('foo'))
 

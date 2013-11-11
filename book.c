@@ -351,7 +351,7 @@ color_unpack(XLPyBook *self, PyObject *args)
 static PyObject *
 ref_r1_c1(XLPyBook *self)
 {
-    if(xlBookRefR1C1W(self->handler))
+    if(xlBookRefR1C1(self->handler))
         Py_RETURN_TRUE;
     Py_RETURN_FALSE;
 }
@@ -361,7 +361,7 @@ set_ref_r1_c1(XLPyBook *self, PyObject *args)
 {
     PyObject *val = NULL;
     if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) return NULL;
-    xlBookSetRefR1C1W(self->handler, PyObject_IsTrue(val) ? 1 : 0);
+    xlBookSetRefR1C1(self->handler, PyObject_IsTrue(val) ? 1 : 0);
     Py_RETURN_NONE;
 }
 

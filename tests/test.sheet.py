@@ -188,16 +188,28 @@ class TestSheet(unittest.TestCase):
         self.sheet.delMerge(3, 5)
         self.assertIsNone(self.sheet.getMerge(3, 5))
 
-    def test_setName(self):
-        self.assertIsNone(self.sheet.setName('foo'))
+    def test_pictureSize(self):
+        self.assertEqual(0, self.sheet.pictureSize())
+
+    def test_getPicture(self):
+        # no picture found
+        self.assertIsNone(self.sheet.getPicture(0)) 
 
     def test_setPicture(self):
         img = self.book.addPicture('./logo.png')
-        self.assertIsNone(self.sheet.setPicture(0, 0, 1, img, 0, 0))
+        self.assertIsNone(self.sheet.setPicture(0, 0, img, 1, 0, 0))
+        self.assertEqual(1, self.sheet.pictureSize())
+
+        match = ( (0, 0), 5, 1, 100, 100, 0, 0 )
+        self.assertEqual(match, self.sheet.getPicture(img))
 
     def test_setPicture2(self):
         img = self.book.addPicture('./logo.png')
-        self.assertIsNone(self.sheet.setPicture2(0, 0, 100, 100, img, 0, 0))
+        self.assertIsNone(self.sheet.setPicture2(0, 0, img, 100, 100, 0, 0))
+        self.assertEqual(1, self.sheet.pictureSize())
+
+    def test_setName(self):
+        self.assertIsNone(self.sheet.setName('foo'))
 
 if __name__ == '__main__':
     unittest.main()

@@ -429,15 +429,26 @@ del_merge(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
-set_name(XLPySheet *self, PyObject *args)
+picture_size(XLPySheet *self)
 {
-    const char *name;
-    if(!PyArg_ParseTuple(args, "s", &name)) {
-        return NULL;
-    }
+	return Py_BuildValue("i", xlSheetPictureSize(self->handler));
+}
 
-    xlSheetSetName(self->handler, name);
-    Py_RETURN_NONE;
+static PyObject *
+get_picture(XLPySheet *self, PyObject *args)
+{
+	int index;
+	if(!PyArg_ParseTuple(args, "i", &index)) return NULL;
+
+	int rowTop, colLeft, rowBottom, colRight, width, height, offset_x, offset_y;
+
+	if(-1 == xlSheetGetPicture(self->handler, index, &rowTop, &colLeft,
+		&rowBottom, &colRight, &width, &height, &offset_x, &offset_y)) {
+		Py_RETURN_NONE;
+	}
+
+	return Py_BuildValue("((ii)iiiiii)",
+		rowTop, colLeft, rowBottom, colRight, width, height, offset_x, offset_y);
 }
 
 static PyObject *
@@ -469,6 +480,20 @@ set_picture_2(XLPySheet *self, PyObject *args)
 
     xlSheetSetPicture2(self->handler, row, col,
             pictureId, width, height, offset_x, offset_y);
+    Py_RETURN_NONE;
+}
+
+
+
+static PyObject *
+set_name(XLPySheet *self, PyObject *args)
+{
+    const char *name;
+    if(!PyArg_ParseTuple(args, "s", &name)) {
+        return NULL;
+    }
+
+    xlSheetSetName(self->handler, name);
     Py_RETURN_NONE;
 }
 
@@ -557,14 +582,27 @@ static PyMethodDef methods[] = {
 		"Returns False if error occurs."},
 	{"delMerge", (PyCFunction) del_merge, METH_VARARGS,
 		"Removes merged cells. Returns False if error occurs."},
-    {"setName", (PyCFunction) set_name, METH_VARARGS,
-        "Sets the name of the sheet."},
+	{"pictureSize", (PyCFunction) picture_size, METH_NOARGS,
+		"Returns a number of pictures in this worksheet."},
+	{"getPicture", (PyCFunction) get_picture, METH_VARARGS,
+		"Returns a workbook picture index at position index in worksheet. "
+		"Returns a tuple with the following values: \n"
+		"(rowTop, colLeft) - top left position of picture;\n"
+		"(rowBottom, colRight) - bottom right position of picture;\n"
+		"width - width of picture in pixels; \n"
+		"height - height of picture in pixels; \n"
+		"offset_x - horizontal offset of picture in pixels; \n"
+		"offset_y - vertical offset of picture in pixels. "
+		"Use Book::getPicture() for extracting binary data of picture by workbook picture index. "
+		"Returns None if error occurs."},
     {"setPicture", (PyCFunction) set_picture, METH_VARARGS,
         "Sets a picture with pictureId identifier at position row and col with scale factor and offsets in pixels. "
         "Use Book::addPicture() for getting picture identifier."},
     {"setPicture2", (PyCFunction) set_picture_2, METH_VARARGS,
         "Sets a picture with pictureId identifier at position row and col with custom size and offsets in pixels. "
         "Use Book::addPicture() for getting a picture identifier."},
+    {"setName", (PyCFunction) set_name, METH_VARARGS,
+        "Sets the name of the sheet."},
 	{NULL}
 };
 

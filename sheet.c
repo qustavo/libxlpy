@@ -545,6 +545,73 @@ set_name(XLPySheet *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+static PyObject *
+protect(XLPySheet *self)
+{
+	if(xlSheetProtect(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_protect(XLPySheet *self, PyObject *args)
+{
+	PyObject *protect;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &protect)) return NULL;
+
+	xlSheetSetProtect(self->handler, PyObject_IsTrue(protect) ? 1 : 0);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+hidden(XLPySheet *self)
+{
+	return Py_BuildValue("i", xlSheetHidden(self->handler));
+}
+
+static PyObject *
+set_hidden(XLPySheet *self, PyObject *args)
+{
+	int hidden;
+	if(!PyArg_ParseTuple(args, "i", &hidden)) return NULL;
+
+	return Py_BuildValue("i", xlSheetSetHidden(self->handler, hidden));
+}
+
+static PyObject *
+get_top_left_view(XLPySheet *self)
+{
+	int row, col;
+	xlSheetGetTopLeftView(self->handler, &row, &col);
+	return Py_BuildValue("(ii)", row, col);
+}
+
+
+static PyObject *
+addr_to_row_col(XLPySheet *self, PyObject *args)
+{
+	const char *addr;
+	if(!PyArg_ParseTuple(args, "s", &addr)) return NULL;
+
+	int row, col, rowRelative, colRelative;
+	xlSheetAddrToRowCol(self->handler, addr, &row, &col, &rowRelative,
+		&colRelative);
+
+	return Py_BuildValue("(iiii)", row, col, rowRelative, colRelative);
+}
+
+static PyObject *
+row_col_to_addr(XLPySheet *self, PyObject *args)
+{
+	int row, col, rowRelative, colRelative;
+	if(!PyArg_ParseTuple(args, "iiii", &row, &col, &rowRelative, &colRelative))
+		return NULL;
+
+	return Py_BuildValue("s",
+		xlSheetRowColToAddr(self->handler, row, col, rowRelative, colRelative)
+	);
+}
+
 static PyMethodDef methods[] = {
     {"cellType", (PyCFunction) cell_type, METH_VARARGS,
         "Returns cell's type."},
@@ -665,6 +732,23 @@ static PyMethodDef methods[] = {
     	"Returns False if error occurs."},
     {"setName", (PyCFunction) set_name, METH_VARARGS,
         "Sets the name of the sheet."},
+	{"protect", (PyCFunction) protect, METH_NOARGS,
+		"Returns whether sheet is protected"},
+	{"setProtect", (PyCFunction) set_protect, METH_VARARGS,
+		"Protects or unprotects the sheet"},
+	{"hidden", (PyCFunction) hidden, METH_NOARGS,
+		"Returns whether sheet is hidden."},
+	{"setHidden", (PyCFunction) set_hidden, METH_VARARGS,
+		"Hides/unhides the sheet. Returns False if error occurs. "
+		"SHEETSTATE_VISIBLE: sheet is visible\n"
+		"SHEETSTATE_HIDDEN:	sheet is hidden, but can be shown via the user interface\n"
+		"SHEETSTATE_VERYHIDDEN: sheet is hidden and cannot be shown in the user interface"},
+	{"getTopLeftView", (PyCFunction) get_top_left_view, METH_NOARGS,
+		"Extracts the first visible row and the leftmost visible column of the sheet."},
+	{"addrToRowCol", (PyCFunction) addr_to_row_col, METH_VARARGS,
+		"Converts a cell reference to row and column."},
+	{"rowColToAddr", (PyCFunction) row_col_to_addr, METH_VARARGS,
+		"Converts row and column to a cell reference."},
 	{NULL}
 };
 

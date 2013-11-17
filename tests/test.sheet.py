@@ -233,5 +233,35 @@ class TestSheet(unittest.TestCase):
     def test_setName(self):
         self.assertIsNone(self.sheet.setName('foo'))
 
+    def test_protect(self):
+        self.assertFalse(self.sheet.protect())
+
+    def test_setProtect(self):
+        self.sheet.setProtect(True)
+        self.assertTrue(self.sheet.protect())
+
+    def test_hidden(self):
+        self.assertEqual( SHEETSTATE_VISIBLE, self.sheet.hidden() )
+
+    def test_setHidden(self):
+        self.assertFalse( self.sheet.setHidden( SHEETSTATE_HIDDEN) )
+        self.assertTrue( self.sheet.setHidden( SHEETSTATE_VISIBLE) )
+        self.assertFalse( self.sheet.setHidden( SHEETSTATE_VERYHIDDEN) )
+
+    def test_getTopLeftView(self):
+        self.assertEqual( (0, 0), self.sheet.getTopLeftView() )
+
+    def test_addrToRowCol(self):
+        self.assertEqual( (0, 0, 0, 0), self.sheet.addrToRowCol('$A$1'))
+        self.assertEqual( (0, 0, 1, 1), self.sheet.addrToRowCol('A1'))
+        self.assertEqual( (2, 2, 0, 0), self.sheet.addrToRowCol('$C$3'))
+        self.assertEqual( (2, 2, 1, 1), self.sheet.addrToRowCol('C3'))
+
+    def test_rowColToAddr(self):
+        self.assertEqual('$A$1', self.sheet.rowColToAddr(0, 0, 0, 0))
+        self.assertEqual('A1', self.sheet.rowColToAddr(0, 0, 1, 1))
+        self.assertEqual('$C$3', self.sheet.rowColToAddr(2, 2, 0, 0))
+        self.assertEqual('C3', self.sheet.rowColToAddr(2, 2, 1, 1))
+
 if __name__ == '__main__':
     unittest.main()

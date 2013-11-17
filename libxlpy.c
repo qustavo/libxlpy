@@ -83,4 +83,8 @@ void initlibxlpy(void)
     ADD_INT_CONSTANT(ERRORTYPE_NA);
     // Available on doc but not on libxl.h
     PyModule_AddIntConstant(mod, "ERRORTYPE_NOERROR", 0xff); 
+
+    ADD_INT_CONSTANT(SHEETSTATE_VISIBLE);
+    ADD_INT_CONSTANT(SHEETSTATE_HIDDEN);
+    ADD_INT_CONSTANT(SHEETSTATE_VERYHIDDEN);
 }

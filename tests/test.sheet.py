@@ -230,6 +230,14 @@ class TestSheet(unittest.TestCase):
         self.sheet.setVerPageBreak(1, True)
         self.assertEqual(1, self.sheet.getVerPageBreakSize())
 
+    def test_split(self):
+        self.assertIsNone(self.sheet.split(0, 0))
+        self.assertIsNone(self.sheet.split(10, 10))
+
+    def test_groupRows(self):
+        self.assertIsNone( self.sheet.groupRows(0, 10, True) )
+        self.assertIsNone( self.sheet.groupRows(0, 10, False) )
+
     def test_setName(self):
         self.assertIsNone(self.sheet.setName('foo'))
 

@@ -534,6 +534,29 @@ set_ver_page_break(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+split(XLPySheet *self, PyObject *args)
+{
+    int row, col;
+    if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+
+    xlSheetSplit(self->handler, row, col);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+group_rows(XLPySheet *self, PyObject *args)
+{
+    int rowFirst, rowLast;
+    PyObject *collapsed;
+    if(!PyArg_ParseTuple(args, "iiO!", &rowFirst, &rowLast, &PyBool_Type, &collapsed)) return NULL;
+
+    xlSheetGroupRows(self->handler, rowFirst, rowLast,
+        PyObject_IsTrue(collapsed) ? 1 : 0);
+
+    Py_RETURN_NONE;
+}
+
+static PyObject *
 set_name(XLPySheet *self, PyObject *args)
 {
     const char *name;
@@ -730,6 +753,10 @@ static PyMethodDef methods[] = {
     {"setVerPageBreak", (PyCFunction) set_ver_page_break, METH_VARARGS,
     	"Sets/removes a vertical page break (sets if True, removes if False). "
     	"Returns False if error occurs."},
+    {"split", (PyCFunction) split, METH_VARARGS,
+        "Splits a sheet at position (row, col)."},
+    {"groupRows", (PyCFunction) group_rows, METH_VARARGS,
+        "Groups rows from rowFirst to rowLast. Returns False if error occurs."},
     {"setName", (PyCFunction) set_name, METH_VARARGS,
         "Sets the name of the sheet."},
 	{"protect", (PyCFunction) protect, METH_NOARGS,

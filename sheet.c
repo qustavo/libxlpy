@@ -557,6 +557,65 @@ group_rows(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+get_named_range(XLPySheet *self, PyObject *args)
+{
+	const char *name;
+	if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
+
+	int rowFirst, rowLast, colFirst, colLast;
+	if(!xlSheetGetNamedRange(self->handler, name, &rowFirst, &rowLast,
+		&colFirst, &colLast)) Py_RETURN_NONE;
+
+	return Py_BuildValue("(iiii)", rowFirst, rowLast, colFirst, colLast);
+}
+
+static PyObject *
+set_named_range(XLPySheet *self, PyObject *args)
+{
+	const char *name;
+	int rowFirst, rowLast, colFirst, colLast;
+	if(!PyArg_ParseTuple(args, "siiii", &name, &rowFirst, &rowLast,
+		&colFirst, &colLast)) return NULL;
+
+	int r = xlSheetSetNamedRange(self->handler, name, rowFirst, rowLast,
+		colFirst, colLast);
+
+	if(!r) Py_RETURN_NONE;
+	return Py_BuildValue("i", r);
+}
+
+static PyObject *
+del_named_range(XLPySheet *self, PyObject *args)
+{
+	const char *name;
+	if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
+
+	if(xlSheetDelNamedRange(self->handler, name)) Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+named_range_size(XLPySheet *self)
+{
+	return Py_BuildValue("i", xlSheetNamedRangeSize(
+		self->handler)
+	);
+}
+
+static PyObject *
+named_range(XLPySheet *self, PyObject *args)
+{
+	int index;
+	if(!PyArg_ParseTuple(args, "i", &index)) return NULL;
+
+	int rowFirst, rowLast, colFirst, colLast;
+	const char *range = xlSheetNamedRange(self->handler, index,
+		&rowFirst, &rowLast, &colFirst, &colLast);
+
+	return Py_BuildValue("(siiii)", range, rowFirst, rowLast, colFirst, colLast);
+}
+
+static PyObject *
 set_name(XLPySheet *self, PyObject *args)
 {
     const char *name;
@@ -757,6 +816,18 @@ static PyMethodDef methods[] = {
         "Splits a sheet at position (row, col)."},
     {"groupRows", (PyCFunction) group_rows, METH_VARARGS,
         "Groups rows from rowFirst to rowLast. Returns False if error occurs."},
+	{"getNamedRange", (PyCFunction) get_named_range, METH_VARARGS,
+		"Gets the named range coordianates by name. "
+		"Returns None if specified named range isn't found or error occurs."},
+	{"setNamedRange", (PyCFunction) set_named_range, METH_VARARGS,
+		"Sets the named range. Returns None if error occurs."},
+	{"delNamedRange", (PyCFunction) del_named_range, METH_VARARGS,
+		"Deletes the named range by name. "
+		"Returns False if error occurs."},
+	{"namedRangeSize", (PyCFunction) named_range_size, METH_NOARGS,
+		"Returns the number of named ranges in the sheet."},
+	{"namedRange", (PyCFunction) named_range, METH_VARARGS,
+		"Gets the named range coordianates by index."},
     {"setName", (PyCFunction) set_name, METH_VARARGS,
         "Sets the name of the sheet."},
 	{"protect", (PyCFunction) protect, METH_NOARGS,

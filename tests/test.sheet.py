@@ -238,6 +238,28 @@ class TestSheet(unittest.TestCase):
         self.assertIsNone( self.sheet.groupRows(0, 10, True) )
         self.assertIsNone( self.sheet.groupRows(0, 10, False) )
 
+    def test_getNamedRange(self):
+        self.assertIsNone(self.sheet.getNamedRange("foo"))
+
+    def test_setNamedRange(self):
+        self.assertTrue(self.sheet.setNamedRange("foo", 0, 10, 0, 10))
+        self.assertEqual(1, self.sheet.namedRangeSize())
+        self.assertEqual( ("foo", 0, 10, 0, 10), self.sheet.namedRange(0) )
+
+    def test_delNamedRange(self):
+        self.assertFalse(self.sheet.delNamedRange('foo'))
+        self.assertTrue(self.sheet.setNamedRange("foo", 0, 10, 0, 10))
+        self.assertTrue(self.sheet.delNamedRange('foo'))
+        self.assertEqual(0, self.sheet.namedRangeSize())
+
+    def test_namedRangeSize(self):
+        self.assertEqual(0, self.sheet.namedRangeSize())
+
+    def test_namedRange(self):
+        self.assertIsInstance(self.sheet.namedRange(0), tuple)
+        self.assertIsInstance(self.sheet.namedRange(-10), tuple)
+        self.assertIsInstance(self.sheet.namedRange(10), tuple)
+
     def test_setName(self):
         self.assertIsNone(self.sheet.setName('foo'))
 

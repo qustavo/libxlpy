@@ -550,10 +550,72 @@ group_rows(XLPySheet *self, PyObject *args)
     PyObject *collapsed;
     if(!PyArg_ParseTuple(args, "iiO!", &rowFirst, &rowLast, &PyBool_Type, &collapsed)) return NULL;
 
-    xlSheetGroupRows(self->handler, rowFirst, rowLast,
-        PyObject_IsTrue(collapsed) ? 1 : 0);
+    if(xlSheetGroupRows(self->handler, rowFirst, rowLast,
+        PyObject_IsTrue(collapsed) ? 1 : 0)) Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
 
-    Py_RETURN_NONE;
+static PyObject *
+group_cols(XLPySheet *self, PyObject *args)
+{
+    int colFirst, colLast;
+    PyObject *collapsed;
+    if(!PyArg_ParseTuple(args, "iiO!", &colFirst, &colLast, &PyBool_Type, &collapsed)) return NULL;
+
+    if(xlSheetGroupCols(self->handler, colFirst, colLast,
+        PyObject_IsTrue(collapsed) ? 1 : 0)) Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+group_summary_below(XLPySheet *self)
+{
+	if(xlSheetGroupSummaryBelow(self->handler)) Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_group_summary_below(XLPySheet *self, PyObject *args)
+{
+	PyObject *below;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &below)) return NULL;
+
+	xlSheetSetGroupSummaryBelow(self->handler,
+		PyObject_IsTrue(below) ? 1 : 0
+	);
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+group_summary_right(XLPySheet *self)
+{
+	if(xlSheetGroupSummaryRight(self->handler)) Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_group_summary_right(XLPySheet *self, PyObject *args)
+{
+	PyObject *right;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &right)) return NULL;
+
+	xlSheetSetGroupSummaryRight(self->handler,
+		PyObject_IsTrue(right) ? 1 : 0
+	);
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+clear(XLPySheet *self, PyObject *args)
+{
+	int rowFirst, rowLast, colFirst, colLast;
+	if(!PyArg_ParseTuple(args, "iiii",
+		&rowFirst, &rowLast, &colFirst, &colLast)) return NULL;
+
+	xlSheetClear(self->handler, rowFirst, rowLast, colFirst, colLast);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -816,6 +878,20 @@ static PyMethodDef methods[] = {
         "Splits a sheet at position (row, col)."},
     {"groupRows", (PyCFunction) group_rows, METH_VARARGS,
         "Groups rows from rowFirst to rowLast. Returns False if error occurs."},
+	{"groupCols", (PyCFunction) group_cols, METH_VARARGS,
+		"Groups columns from colFirst to colLast. Returns False if error occurs."},
+	{"groupSummaryBelow", (PyCFunction) group_summary_below, METH_NOARGS,
+		"Returns whether grouping rows summary is below. "
+		"Returns True if summary is below and False if isn't."},
+	{"setGroupSummaryBelow", (PyCFunction) set_group_summary_below, METH_VARARGS,
+		"Sets a flag of grouping rows summary: True - below, False - above."},
+	{"groupSummaryRight", (PyCFunction) group_summary_right, METH_NOARGS,
+		"Returns whether grouping columns summary is right. "
+		"Returns True if summary is right and False if isn't."},
+	{"setGroupSummaryRight", (PyCFunction) set_group_summary_right, METH_VARARGS,
+		"Sets a flag of grouping columns summary: True - right, False - left."},
+	{"clear", (PyCFunction) clear, METH_VARARGS,
+		"Clears cells in specified area."},
 	{"getNamedRange", (PyCFunction) get_named_range, METH_VARARGS,
 		"Gets the named range coordianates by name. "
 		"Returns None if specified named range isn't found or error occurs."},

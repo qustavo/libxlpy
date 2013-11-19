@@ -235,8 +235,43 @@ class TestSheet(unittest.TestCase):
         self.assertIsNone(self.sheet.split(10, 10))
 
     def test_groupRows(self):
-        self.assertIsNone( self.sheet.groupRows(0, 10, True) )
-        self.assertIsNone( self.sheet.groupRows(0, 10, False) )
+        self.assertTrue( self.sheet.groupRows(0, 10, True) )
+        self.assertTrue( self.sheet.groupRows(0, 10, False) )
+    
+    def test_groupCols(self):
+        self.assertTrue( self.sheet.groupCols(0, 10, True) )
+        self.assertTrue( self.sheet.groupCols(0, 10, False) )
+
+    def test_groupSummaryBelow(self):
+        self.assertTrue( self.sheet.groupSummaryBelow() )
+
+    def test_setGroupSummaryBelow(self):
+        self.sheet.setGroupSummaryBelow(False)
+        self.assertFalse( self.sheet.groupSummaryBelow() )
+        
+        self.sheet.setGroupSummaryBelow(True)
+        self.assertTrue( self.sheet.groupSummaryBelow() )
+
+    def test_groupSummaryRight(self):
+        self.assertTrue( self.sheet.groupSummaryRight() )
+
+    def test_setGroupSummaryRight(self):
+        self.sheet.setGroupSummaryRight(False)
+        self.assertFalse( self.sheet.groupSummaryRight() )
+        
+        self.sheet.setGroupSummaryRight(True)
+        self.assertTrue( self.sheet.groupSummaryRight() )
+
+    def test_clear(self):
+        self.sheet.writeStr( 1,  1, 'foo')
+        self.sheet.writeStr( 5,  5, 'bar')
+        self.sheet.writeStr(10, 10, 'foobar')
+
+        self.sheet.clear(0, 5, 0, 5)
+
+        self.assertIsNone( self.sheet.readStr( 1,  1) )
+        self.assertIsNone( self.sheet.readStr( 5,  5) )
+        self.assertEqual('foobar', self.sheet.readStr(10, 10)[0])
 
     def test_getNamedRange(self):
         self.assertIsNone(self.sheet.getNamedRange("foo"))

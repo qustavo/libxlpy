@@ -80,11 +80,16 @@ class TestBook(unittest.TestCase):
         index = self.book.activeSheet()
         self.assertEqual(index, 0)
 
-    @unittest.skip("not working on libxl")
     def test_setActiveSheet(self):
+        self.book.setActiveSheet(10)
+        self.assertEqual(0, self.book.activeSheet())
+
         sheet = self.book.addSheet('foo')
-        self.book.setActiveSheet(1)
-        self.assertEqual(1, self.book.activeSheet())
+        sheet = self.book.addSheet('bar')
+        sheet = self.book.addSheet('foobar')
+        self.book.setActiveSheet(2)
+        self.assertEqual(2, self.book.activeSheet())
+        
 
     def test_pictureSize(self):
         self.assertEqual(0, self.book.pictureSize())

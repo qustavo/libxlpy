@@ -619,6 +619,100 @@ clear(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+insert_row(XLPySheet *self, PyObject *args)
+{
+    int first, last;
+    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+
+    if(xlSheetInsertRow(self->handler, first, last))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+insert_col(XLPySheet *self, PyObject *args)
+{
+    int first, last;
+    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+
+    if(xlSheetInsertCol(self->handler, first, last))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+remove_row(XLPySheet *self, PyObject *args)
+{
+    int first, last;
+    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+
+    if(xlSheetRemoveRow(self->handler, first, last))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+remove_col(XLPySheet *self, PyObject *args)
+{
+    int first, last;
+    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+
+    if(xlSheetRemoveCol(self->handler, first, last))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+copy_cell(XLPySheet *self, PyObject *args)
+{
+    int rowSrc, colSrc, rowDst, colDst;
+    if(!PyArg_ParseTuple(args, "iiii", &rowSrc, &colSrc, &rowDst, &colDst))
+        return NULL;
+
+    if(xlSheetCopyCell(self->handler, rowSrc, colSrc, rowDst, colDst))
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+first_row(XLPySheet *self)
+{
+    return Py_BuildValue("i", xlSheetFirstRow(self->handler));
+}
+
+static PyObject *
+last_row(XLPySheet *self)
+{
+    return Py_BuildValue("i", xlSheetLastRow(self->handler));
+}
+
+static PyObject *
+first_col(XLPySheet *self)
+{
+    return Py_BuildValue("i", xlSheetFirstCol(self->handler));
+}
+
+static PyObject *
+last_col(XLPySheet *self)
+{
+    return Py_BuildValue("i", xlSheetLastCol(self->handler));
+}
+
+static PyObject *
+clear_print_repeats(XLPySheet *self)
+{
+    xlSheetClearPrintRepeats(self->handler);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
+clear_print_area(XLPySheet *self)
+{
+    xlSheetClearPrintArea(self->handler);
+    Py_RETURN_NONE;
+}
+
+static PyObject *
 get_named_range(XLPySheet *self, PyObject *args)
 {
 	const char *name;
@@ -892,6 +986,33 @@ static PyMethodDef methods[] = {
 		"Sets a flag of grouping columns summary: True - right, False - left."},
 	{"clear", (PyCFunction) clear, METH_VARARGS,
 		"Clears cells in specified area."},
+    {"insertRow", (PyCFunction) insert_row, METH_VARARGS,
+        "Inserts rows from rowFirst to rowLast."
+        "Returns False if error occurs."},
+    {"insertCol", (PyCFunction) insert_col, METH_VARARGS,
+        "Inserts cols from colFirst to colLast."
+        "Returns False if error occurs."},
+    {"removeRow", (PyCFunction) remove_row, METH_VARARGS,
+        "Removes rows from rowFirst to rowLast."
+        "Returns False if error occurs."},
+    {"removeCol", (PyCFunction) remove_col, METH_VARARGS,
+        "Removes cols from colFirst to colLast."
+        "Returns False if error occurs."},
+    {"copyCell", (PyCFunction) copy_cell, METH_VARARGS,
+        "Copies cell with format from (rowSrc, colSrc) to (rowDst, colDst). "
+        "Returns False if error occurs."},
+    {"firstRow", (PyCFunction) first_row, METH_NOARGS,
+        "Returns the first row in the sheet that contains a used cell."},
+    {"lastRow", (PyCFunction) last_row, METH_NOARGS,
+        "Returns the zero-based index of the row after the last row in the sheet that contains a used cell."},
+    {"firstCol", (PyCFunction) first_col, METH_NOARGS,
+        "Returns the first column in the sheet that contains a used cell."},
+    {"lastCol", (PyCFunction) last_col, METH_NOARGS,
+        "Returns the zero-based index of the column after the last column in the sheet that contains a used cell."},
+    {"clearPrintRepeats", (PyCFunction) clear_print_repeats, METH_NOARGS,
+        "Clears repeated rows and columns on each page."},
+    {"clearPrintArea", (PyCFunction) clear_print_area, METH_NOARGS,
+        "Clears the print area."},
 	{"getNamedRange", (PyCFunction) get_named_range, METH_VARARGS,
 		"Gets the named range coordianates by name. "
 		"Returns None if specified named range isn't found or error occurs."},

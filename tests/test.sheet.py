@@ -273,8 +273,72 @@ class TestSheet(unittest.TestCase):
         self.assertIsNone( self.sheet.readStr( 5,  5) )
         self.assertEqual('foobar', self.sheet.readStr(10, 10)[0])
 
+    def test_insertRow(self):
+        # trial version error
+        self.assertFalse(self.sheet.insertRow(0, 1))
+
+        # argument error
+        self.assertFalse(self.sheet.insertRow(1, 0))
+
+        self.assertTrue(self.sheet.insertRow(1, 10))
+
+    def test_insertCol(self):
+        # trial version error
+        self.assertFalse(self.sheet.insertCol(0, 1))
+
+        # argument error
+        self.assertFalse(self.sheet.insertCol(1, 0))
+
+        self.assertTrue(self.sheet.insertCol(1, 10))
+
+    def test_removeRow(self):
+        self.assertFalse(self.sheet.removeRow(0, 1))
+        self.assertFalse(self.sheet.removeRow(1, 0))
+
+        self.sheet.writeStr(1, 0, 'foo')
+        self.assertTrue(self.sheet.removeRow(1, 1))
+        self.assertIsNone( self.sheet.readStr(1, 0) )
+
+    def test_removeCol(self):
+        self.assertFalse(self.sheet.removeCol(0, 1))
+        self.assertFalse(self.sheet.removeCol(1, 0))
+
+        self.sheet.writeStr(1, 1, 'foo')
+        self.assertTrue(self.sheet.removeCol(1, 10))
+        self.assertIsNone( self.sheet.readStr(1, 1) )
+
+    def test_copyCell(self):
+        self.sheet.writeStr(1, 1, 'foo')
+        self.sheet.copyCell(1, 1, 2, 2)
+        (str, fmt) = self.sheet.readStr(2, 2)
+        self.assertEqual('foo', str)
+
+        # trial error
+        self.assertFalse(self.sheet.copyCell(0, 0, 1, 1))
+
+    def test_firstRow(self):
+        self.assertEqual(0, self.sheet.firstRow())
+
+    def test_lastRow(self):
+        self.sheet.writeStr(10, 0, 'foo')
+        self.assertEqual(11, self.sheet.lastRow())
+        self.book.save('cac.xls')
+
+    def test_firstCol(self):
+        self.assertEqual(0, self.sheet.firstCol())
+
+    def test_lastCol(self):
+        self.sheet.writeStr(1, 10, 'foo')
+        self.assertEqual(11, self.sheet.lastCol())
+
     def test_getNamedRange(self):
         self.assertIsNone(self.sheet.getNamedRange("foo"))
+
+    def test_clearPrintRepeats(self):
+        self.assertIsNone(self.sheet.clearPrintRepeats())
+
+    def test_clearPrintArea(self):
+        self.assertIsNone(self.sheet.clearPrintArea())
 
     def test_setNamedRange(self):
         self.assertTrue(self.sheet.setNamedRange("foo", 0, 10, 0, 10))

@@ -322,7 +322,6 @@ class TestSheet(unittest.TestCase):
     def test_lastRow(self):
         self.sheet.writeStr(10, 0, 'foo')
         self.assertEqual(11, self.sheet.lastRow())
-        self.book.save('cac.xls')
 
     def test_firstCol(self):
         self.assertEqual(0, self.sheet.firstCol())
@@ -330,6 +329,57 @@ class TestSheet(unittest.TestCase):
     def test_lastCol(self):
         self.sheet.writeStr(1, 10, 'foo')
         self.assertEqual(11, self.sheet.lastCol())
+
+    def test_displayGridlines(self):
+        self.assertIsInstance(self.sheet.displayGridlines(), bool)
+
+    def test_setDisplayGridlines(self):
+        self.sheet.setDisplayGridlines(True)
+        self.assertTrue(self.sheet.displayGridlines())
+        
+        self.sheet.setDisplayGridlines(False)
+        self.assertFalse(self.sheet.displayGridlines())
+    
+    def test_printGridlines(self):
+        self.assertIsInstance(self.sheet.printGridlines(), bool)
+
+    def test_setPrintGridlines(self):
+        self.sheet.setPrintGridlines(True)
+        self.assertTrue(self.sheet.printGridlines())
+        
+        self.sheet.setPrintGridlines(False)
+        self.assertFalse(self.sheet.printGridlines())
+
+    def test_zoom(self):
+        self.assertIsInstance(self.sheet.zoom(), int)
+
+    def test_setZoom(self):
+        self.sheet.setZoom(200)
+        self.assertEquals(200, self.sheet.zoom())
+
+    def test_getPrintFit(self):
+        self.assertIsInstance(self.sheet.getPrintFit(), tuple)
+
+    def test_setPrintFit(self):
+        self.sheet.setPrintFit(10, 20)
+        self.assertEquals(self.sheet.getPrintFit(), (10, 20))
+
+    def test_landscape(self):
+        self.assertIsInstance(self.sheet.landscape(), bool)
+
+    def test_setLandscape(self):
+        self.sheet.setLandscape(True)
+        self.assertTrue(self.sheet.landscape())
+
+        self.sheet.setLandscape(False)
+        self.assertFalse(self.sheet.landscape())
+
+    def test_paper(self):
+        self.assertEquals(self.sheet.paper(), PAPER_DEFAULT) 
+
+    def test_setPaper(self):
+        self.sheet.setPaper(PAPER_FOLIO)
+        self.assertEquals(self.sheet.paper(), PAPER_FOLIO)
 
     def test_getNamedRange(self):
         self.assertIsNone(self.sheet.getNamedRange("foo"))

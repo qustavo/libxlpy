@@ -699,6 +699,112 @@ last_col(XLPySheet *self)
 }
 
 static PyObject *
+display_gridlines(XLPySheet *self)
+{
+	if(xlSheetDisplayGridlines(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_display_gridlines(XLPySheet *self, PyObject *args)
+{
+	PyObject *show;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &show)) return NULL;
+
+	xlSheetSetDisplayGridlines(self->handler, PyObject_IsTrue(show));
+	Py_DECREF(show);
+}
+
+static PyObject *
+print_gridlines(XLPySheet *self)
+{
+	if(xlSheetPrintGridlines(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_print_gridlines(XLPySheet *self, PyObject *args)
+{
+	PyObject *print;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &print)) return NULL;
+
+	xlSheetSetPrintGridlines(self->handler, PyObject_IsTrue(print));
+	Py_DECREF(print);
+}
+
+static PyObject *
+zoom(XLPySheet *self)
+{
+	return Py_BuildValue("i", xlSheetZoom(self->handler));
+}
+
+static PyObject *
+set_zoom(XLPySheet *self, PyObject *args)
+{
+	int zoom;
+	if(!PyArg_ParseTuple(args, "i", &zoom)) return NULL;
+
+	xlSheetSetZoom(self->handler, zoom);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+get_print_fit(XLPySheet *self)
+{
+	int wPages, hPages;
+	xlSheetGetPrintFit(self->handler, &wPages, &hPages);
+	return Py_BuildValue("(ii)", wPages, hPages);
+}
+
+static PyObject *
+set_print_fit(XLPySheet *self, PyObject *args)
+{
+	int wPages, hPages;
+	if(!PyArg_ParseTuple(args, "ii", &wPages, &hPages)) return NULL;
+
+	xlSheetSetPrintFit(self->handler, wPages, hPages);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+landscape(XLPySheet *self)
+{
+	if(xlSheetLandscape(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_landscape(XLPySheet *self, PyObject *args)
+{
+	PyObject *landscape;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &landscape)) return NULL;
+
+	xlSheetSetLandscape(self->handler, PyObject_IsTrue(landscape));
+	Py_DECREF(landscape);
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+paper(XLPySheet *self)
+{
+	return Py_BuildValue("i", xlSheetPaper(self->handler));
+}
+
+static PyObject *
+set_paper(XLPySheet *self, PyObject *args)
+{
+	int paper;
+	if(!PyArg_ParseTuple(args, "i", &paper)) return NULL;
+
+	xlSheetSetPaper(self->handler, paper);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
 clear_print_repeats(XLPySheet *self)
 {
     xlSheetClearPrintRepeats(self->handler);
@@ -1009,6 +1115,41 @@ static PyMethodDef methods[] = {
         "Returns the first column in the sheet that contains a used cell."},
     {"lastCol", (PyCFunction) last_col, METH_NOARGS,
         "Returns the zero-based index of the column after the last column in the sheet that contains a used cell."},
+	{"displayGridlines", (PyCFunction) display_gridlines, METH_NOARGS,
+		"Returns whether the gridlines are displayed. "
+		"Returns True if gridlines are displayed and False if aren't."},
+	{"setDisplayGridlines", (PyCFunction) set_display_gridlines, METH_VARARGS,
+		"Sets gridlines for displaying, "
+		"True  - gridlines are displayed, "
+		"False - gridlines aren't displayed"},
+	{"printGridlines", (PyCFunction) print_gridlines, METH_NOARGS,
+		"Returns whether the gridlines are printer. "
+		"Returns True if gridlines are printer and False if aren't."},
+	{"setPrintGridlines", (PyCFunction) set_print_gridlines, METH_VARARGS,
+		"Sets gridlines for printing, "
+		"True  - gridlines are printed, "
+		"False - gridlines aren't printed"},
+	{"zoom", (PyCFunction) zoom, METH_NOARGS,
+		"Returns the scaling factor for printing as a percentage."},
+	{"setZoom", (PyCFunction) set_zoom, METH_VARARGS,
+		"Sets the scaling factor for printing as a percentage."},
+	{"getPrintFit", (PyCFunction) get_print_fit, METH_NOARGS,
+		"Returns whether fit to page option is enabled as a tuple of:\n"
+		"wPages - number of pages the sheet width is fit to;\n"
+		"hPages - number of pages the sheet height is fit to"},
+	{"setPrintFit", (PyCFunction) set_print_fit, METH_VARARGS,
+		"Fits sheet width and sheet height to wPages and hPages respectively."},
+	{"landscape", (PyCFunction) landscape, METH_NOARGS,
+		"Returns a page orientation mode, "
+		"True - landscape mode, False - portrait mode."},
+	{"setLandscape", (PyCFunction) set_landscape, METH_VARARGS,
+		"Sets landscape or portrait mode for printing, "
+		"True - pages are printed using landscape mode, "
+		"False - pages are printed using portrait mode"},
+	{"paper", (PyCFunction) paper, METH_NOARGS,
+		"Retrurns the paper size."},
+	{"setPaper", (PyCFunction) set_paper, METH_VARARGS,
+		"Sets the paper size."},
     {"clearPrintRepeats", (PyCFunction) clear_print_repeats, METH_NOARGS,
         "Clears repeated rows and columns on each page."},
     {"clearPrintArea", (PyCFunction) clear_print_area, METH_NOARGS,

@@ -154,11 +154,8 @@ write_bool(XLPySheet *self, PyObject *args)
 		return NULL;
 	}
 
-	if (!xlSheetWriteBool(self->handler, row, col,
-				PyObject_IsTrue(val) ? 1 : 0,
-				0)) {
+	if (!xlSheetWriteBool(self->handler, row, col, PyObject_IsTrue(val), 0))
 		Py_RETURN_FALSE;
-	}
 	Py_RETURN_TRUE;
 }
 
@@ -306,7 +303,7 @@ set_col(XLPySheet *self, PyObject *args, PyObject *kwargs)
 	if(!hidden) hidden = Py_False;
 	if(xlSheetSetCol(self->handler, colFirst, colLast, width,
 				(NULL != fmt) ? fmt->handler : 0,
-				PyObject_IsTrue(hidden) ? 1 : 0)) {
+				PyObject_IsTrue(hidden))) {
 		Py_RETURN_TRUE;
 	}
 	Py_RETURN_FALSE;
@@ -335,10 +332,8 @@ set_row(XLPySheet *self, PyObject *args, PyObject *kwargs)
 
 	if(!hidden) hidden = Py_False;
 	if(xlSheetSetRow(self->handler, row, height,
-				(NULL != fmt) ? fmt->handler : 0,
-				PyObject_IsTrue(hidden) ? 1 : 0)) {
+				(NULL != fmt) ? fmt->handler : 0, PyObject_IsTrue(hidden)))
 		Py_RETURN_TRUE;
-	}
 	Py_RETURN_FALSE;
 }
 
@@ -359,8 +354,7 @@ set_row_hidden(XLPySheet *self, PyObject *args)
 	PyObject *hidden = NULL;
 
 	if(!PyArg_ParseTuple(args, "iO!", &row, &PyBool_Type, &hidden)) return NULL;
-	if(xlSheetSetRowHidden(self->handler, row,
-				PyObject_IsTrue(hidden) ? 1 : 0))
+	if(xlSheetSetRowHidden(self->handler, row, PyObject_IsTrue(hidden)))
 		Py_RETURN_TRUE;
 	Py_RETURN_FALSE;
 }
@@ -382,8 +376,7 @@ set_col_hidden(XLPySheet *self, PyObject *args)
 	PyObject *hidden = NULL;
 
 	if(!PyArg_ParseTuple(args, "iO!", &col, &PyBool_Type, &hidden)) return NULL;
-	if(xlSheetSetColHidden(self->handler, col,
-				PyObject_IsTrue(hidden) ? 1 : 0))
+	if(xlSheetSetColHidden(self->handler, col, PyObject_IsTrue(hidden)))
 		Py_RETURN_TRUE;
 	Py_RETURN_FALSE;
 }
@@ -551,7 +544,7 @@ group_rows(XLPySheet *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "iiO!", &rowFirst, &rowLast, &PyBool_Type, &collapsed)) return NULL;
 
     if(xlSheetGroupRows(self->handler, rowFirst, rowLast,
-        PyObject_IsTrue(collapsed) ? 1 : 0)) Py_RETURN_TRUE;
+    			PyObject_IsTrue(collapsed))) Py_RETURN_TRUE;
     Py_RETURN_FALSE;
 }
 
@@ -563,7 +556,7 @@ group_cols(XLPySheet *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "iiO!", &colFirst, &colLast, &PyBool_Type, &collapsed)) return NULL;
 
     if(xlSheetGroupCols(self->handler, colFirst, colLast,
-        PyObject_IsTrue(collapsed) ? 1 : 0)) Py_RETURN_TRUE;
+    			PyObject_IsTrue(collapsed))) Py_RETURN_TRUE;
     Py_RETURN_FALSE;
 }
 
@@ -580,10 +573,7 @@ set_group_summary_below(XLPySheet *self, PyObject *args)
 	PyObject *below;
 	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &below)) return NULL;
 
-	xlSheetSetGroupSummaryBelow(self->handler,
-		PyObject_IsTrue(below) ? 1 : 0
-	);
-
+	xlSheetSetGroupSummaryBelow(self->handler, PyObject_IsTrue(below));
 	Py_RETURN_NONE;
 }
 
@@ -600,10 +590,7 @@ set_group_summary_right(XLPySheet *self, PyObject *args)
 	PyObject *right;
 	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &right)) return NULL;
 
-	xlSheetSetGroupSummaryRight(self->handler,
-		PyObject_IsTrue(right) ? 1 : 0
-	);
-
+	xlSheetSetGroupSummaryRight(self->handler, PyObject_IsTrue(right));
 	Py_RETURN_NONE;
 }
 
@@ -903,7 +890,7 @@ set_protect(XLPySheet *self, PyObject *args)
 	PyObject *protect;
 	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &protect)) return NULL;
 
-	xlSheetSetProtect(self->handler, PyObject_IsTrue(protect) ? 1 : 0);
+	xlSheetSetProtect(self->handler, PyObject_IsTrue(protect));
 	Py_RETURN_NONE;
 }
 

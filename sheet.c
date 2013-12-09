@@ -6,6 +6,8 @@
 
 extern PyTypeObject XLPyFormatType;
 
+enum Position { LEFT, RIGHT, TOP, BOTTOM };
+
 static int
 init(XLPySheet *self)
 {
@@ -792,6 +794,174 @@ set_paper(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+header(XLPySheet *self)
+{
+	return Py_BuildValue("s", xlSheetHeader(self->handler));
+}
+
+static PyObject *
+set_header(XLPySheet *self, PyObject *args)
+{
+	const char *header;
+	double margin;
+
+	if(!PyArg_ParseTuple(args, "sd", &header, &margin)) return NULL;
+
+	if(xlSheetSetHeader(self->handler, header, margin))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+header_margin(XLPySheet *self)
+{
+	return Py_BuildValue("d", xlSheetHeaderMargin(self->handler));
+}
+
+static PyObject *
+footer(XLPySheet *self)
+{
+	return Py_BuildValue("s", xlSheetFooter(self->handler));
+}
+
+static PyObject *
+set_footer(XLPySheet *self, PyObject *args)
+{
+	const char *footer;
+	double margin;
+
+	if(!PyArg_ParseTuple(args, "sd", &footer, &margin)) return NULL;
+
+	if(xlSheetSetFooter(self->handler, footer, margin))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+footer_margin(XLPySheet *self)
+{
+	return Py_BuildValue("d", xlSheetFooterMargin(self->handler));
+}
+
+static PyObject *
+h_center(XLPySheet *self)
+{
+	if(xlSheetHCenter(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_h_center(XLPySheet *self, PyObject *args)
+{
+	PyObject *bool;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &bool)) return NULL;
+
+	xlSheetSetHCenter(self->handler, PyObject_IsTrue(bool));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+v_center(XLPySheet *self)
+{
+	if(xlSheetVCenter(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_v_center(XLPySheet *self, PyObject *args)
+{
+	PyObject *bool;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &bool)) return NULL;
+
+	xlSheetSetVCenter(self->handler, PyObject_IsTrue(bool));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+generic_margin(XLPySheet *self, int pos)
+{
+	double margin;
+	switch(pos) {
+		case LEFT:
+			margin = xlSheetMarginLeft(self->handler);
+			break;
+		case RIGHT:
+			margin = xlSheetMarginRight(self->handler);
+			break;
+		case TOP:
+			margin = xlSheetMarginTop(self->handler);
+			break;
+		case BOTTOM:
+			margin = xlSheetMarginBottom(self->handler);
+			break;
+	}
+
+	return Py_BuildValue("d", margin);
+}
+
+static PyObject *
+generic_set_margin(XLPySheet *self, PyObject *args, int pos)
+{
+	double margin;
+	if(!PyArg_ParseTuple(args, "d", &margin)) return NULL;
+
+	switch(pos) {
+		case LEFT:
+			xlSheetSetMarginLeft(self->handler, margin);
+			break;
+		case RIGHT:
+			xlSheetSetMarginRight(self->handler, margin);
+			break;
+		case TOP:
+			xlSheetSetMarginTop(self->handler, margin);
+			break;
+		case BOTTOM:
+			xlSheetSetMarginBottom(self->handler, margin);
+			break;
+	}
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+margin_left(XLPySheet *self) { return generic_margin(self, LEFT); }
+
+static PyObject *
+margin_right(XLPySheet *self) { return generic_margin(self, RIGHT); }
+
+static PyObject *
+margin_top(XLPySheet *self) { return generic_margin(self, TOP); }
+
+static PyObject *
+margin_bottom(XLPySheet *self) { return generic_margin(self, BOTTOM); }
+
+static PyObject *
+set_margin_left(XLPySheet *self, PyObject *args)
+{
+	return generic_set_margin(self, args, LEFT);
+}
+
+static PyObject *
+set_margin_right(XLPySheet *self, PyObject *args)
+{
+	return generic_set_margin(self, args, RIGHT);
+}
+
+static PyObject *
+set_margin_top(XLPySheet *self, PyObject *args)
+{
+	return generic_set_margin(self, args, TOP);
+}
+
+static PyObject *
+set_margin_bottom(XLPySheet *self, PyObject *args)
+{
+	return generic_set_margin(self, args, BOTTOM);
+}
+
+static PyObject *
 clear_print_repeats(XLPySheet *self)
 {
     xlSheetClearPrintRepeats(self->handler);
@@ -1137,6 +1307,56 @@ static PyMethodDef methods[] = {
 		"Retrurns the paper size."},
 	{"setPaper", (PyCFunction) set_paper, METH_VARARGS,
 		"Sets the paper size."},
+	{"header", (PyCFunction) header, METH_NOARGS,
+		"Returns the header text of the sheet when printed."},
+	{"setHeader", (PyCFunction) set_header, METH_VARARGS,
+		"Sets the header text of the sheet when printed. "
+		"The text appears at the top of every page when printed. "
+		"The length of the text must be less than or equal to 255. "
+		"The header text can contain special commands, for example a placeholder for the page number, "
+		"current date or text formatting attributes. "
+		"Special commands are represented by single letter with a leading ampersand (\"&\"). "
+		"Margin is specified in inches."},
+	{"headerMargin", (PyCFunction) header_margin, METH_NOARGS,
+		"Returns the header margin in inches."},
+	{"footer", (PyCFunction) footer, METH_NOARGS,
+		"Returns the footer text of the sheet when printed."},
+	{"setFooter", (PyCFunction) set_footer, METH_VARARGS,
+		"Sets the footer text for the sheet when printed. "
+		"The footer text appears at the bottom of every page when printed. "
+		"The length of the text must be less than or equal to 255. "
+		"The footer text can contain special commands, "
+		"for example a placeholder for the page number, "
+		"current date or text formatting attributes. "
+		"See Sheet::SetHeader() for details. "
+		"Margin is specified in inches."},
+	{"footerMargin", (PyCFunction) footer_margin, METH_NOARGS,
+		"Returns the footer margin in inches."},
+	{"hCenter", (PyCFunction) h_center, METH_NOARGS,
+		"Returns whether the sheet is centered horizontally when printed"},
+	{"setHCenter", (PyCFunction) set_h_center, METH_VARARGS,
+		"Sets a flag that the sheet is centered horizontally when printed"},
+	{"vCenter", (PyCFunction) v_center, METH_NOARGS,
+		"Returns whether the sheet is centered vertically when printed"},
+	{"setVCenter", (PyCFunction) set_v_center, METH_VARARGS,
+		"Sets a flag that the sheet is centered vertically when printed"},
+	{"marginLeft", (PyCFunction) margin_left, METH_NOARGS,
+		"Returns the left margin of the sheet in inches."},
+	{"setMarginLeft", (PyCFunction) set_margin_left, METH_VARARGS,
+		"Sets the left margin of the sheet in inches."},
+	{"marginRight", (PyCFunction) margin_right, METH_NOARGS,
+		"Returns the Right margin of the sheet in inches."},
+	{"setMarginRight", (PyCFunction) set_margin_right, METH_VARARGS,
+		"Sets the right margin of the sheet in inches."},
+	{"marginTop", (PyCFunction) margin_top, METH_NOARGS,
+		"Returns the top margin of the sheet in inches."},
+	{"setMarginTop", (PyCFunction) set_margin_top, METH_VARARGS,
+		"Sets the top margin of the sheet in inches."},
+	{"marginBottom", (PyCFunction) margin_bottom, METH_NOARGS,
+		"Returns the bottom margin of the sheet in inches."},
+	{"setMarginBottom", (PyCFunction) set_margin_bottom, METH_VARARGS,
+		"Sets the bottom margin of the sheet in inches."},
+
     {"clearPrintRepeats", (PyCFunction) clear_print_repeats, METH_NOARGS,
         "Clears repeated rows and columns on each page."},
     {"clearPrintArea", (PyCFunction) clear_print_area, METH_NOARGS,

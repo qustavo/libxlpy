@@ -381,6 +381,71 @@ class TestSheet(unittest.TestCase):
         self.sheet.setPaper(PAPER_FOLIO)
         self.assertEquals(self.sheet.paper(), PAPER_FOLIO)
 
+    def test_header(self):
+        self.assertIsNone(self.sheet.header())
+
+    def test_setHeader(self):
+        hdr = "Header Text"
+        self.sheet.setHeader(hdr, 10)
+        self.assertEquals(hdr, self.sheet.header())
+    
+    def test_headerMargin(self):
+        self.assertIsInstance(self.sheet.headerMargin(), float)
+
+        margin = 10.0
+        self.sheet.setHeader("foo", margin)
+        self.assertEquals(margin, self.sheet.headerMargin())
+
+    def test_footer(self):
+        self.assertIsNone(self.sheet.footer())
+
+    def test_setFooter(self):
+        ftr = "Footer Text"
+        self.sheet.setFooter(ftr, 10)
+        self.assertEquals(ftr, self.sheet.footer())
+    
+    def test_footerMargin(self):
+        self.assertIsInstance(self.sheet.footerMargin(), float)
+
+        margin = 10.0
+        self.sheet.setFooter("foo", margin)
+        self.assertEquals(margin, self.sheet.footerMargin())
+
+    def test_hCenter(self):
+        self.assertIsInstance(self.sheet.hCenter(), bool)
+
+    def test_setHCenter(self):
+        self.sheet.setHCenter(True)
+        self.assertTrue(self.sheet.hCenter())
+
+        self.sheet.setHCenter(False)
+        self.assertFalse(self.sheet.hCenter())
+
+    def test_vCenter(self):
+        self.assertIsInstance(self.sheet.vCenter(), bool)
+
+    def test_setVCenter(self):
+        self.sheet.setVCenter(True)
+        self.assertTrue(self.sheet.vCenter())
+
+        self.sheet.setHCenter(False)
+        self.assertFalse(self.sheet.hCenter())
+
+    def test_Margins(self):
+        margin = 10.0
+
+        self.sheet.setMarginLeft(margin)
+        self.assertEquals(margin, self.sheet.marginLeft())
+
+        self.sheet.setMarginRight(margin)
+        self.assertEquals(margin, self.sheet.marginRight())
+        
+        self.sheet.setMarginTop(margin)
+        self.assertEquals(margin, self.sheet.marginTop())
+
+        self.sheet.setMarginBottom(margin)
+        self.assertEquals(margin, self.sheet.marginBottom())
+
     def test_getNamedRange(self):
         self.assertIsNone(self.sheet.getNamedRange("foo"))
 

@@ -85,15 +85,14 @@ read_str(XLPySheet *self, PyObject *args)
 static PyObject *
 write_str(XLPySheet *self, PyObject *args)
 {
-	int row, col;
+	const int row, col;
 	const char *val;
-	if(!PyArg_ParseTuple(args, "iis", &row, &col, &val)) {
-		return NULL;
-	}
+	XLPyFormat *fmt = NULL;
+	if(!PyArg_ParseTuple(args, "iis|O!", &row, &col, &val, &XLPyFormatType,
+				&fmt)) return NULL;
 
-	if (!xlSheetWriteStr(self->handler, row, col, val, 0)) {
-		Py_RETURN_FALSE;
-	}
+	if (!xlSheetWriteStr(self->handler, row, col, val,
+				fmt ? fmt->handler : NULL)) Py_RETURN_FALSE;
 	Py_RETURN_TRUE;
 }
 
@@ -119,13 +118,12 @@ write_num(XLPySheet *self, PyObject *args)
 {
 	int row, col;
 	double val;
-	if(!PyArg_ParseTuple(args, "iid", &row, &col, &val)) {
-		return NULL;
-	}
+	XLPyFormat *fmt = NULL;
+	if(!PyArg_ParseTuple(args, "iid|O!", &row, &col, &val, &XLPyFormatType,
+				&fmt)) return NULL;
 
-	if (!xlSheetWriteNum(self->handler, row, col, val, 0)) {
-		Py_RETURN_FALSE;
-	}
+	if (!xlSheetWriteNum(self->handler, row, col, val,
+				fmt ? fmt->handler : NULL)) Py_RETURN_FALSE;
 	Py_RETURN_TRUE;
 }
 
@@ -152,12 +150,12 @@ write_bool(XLPySheet *self, PyObject *args)
 {
 	int row, col;
 	PyObject *val;
-	if(!PyArg_ParseTuple(args, "iiO!", &row, &col, &PyBool_Type, &val)) {
-		return NULL;
-	}
+	XLPyFormat *fmt = NULL;
+	if(!PyArg_ParseTuple(args, "iiO!|O!", &row, &col, &PyBool_Type, &val,
+				&XLPyFormatType, &fmt)) return NULL;
 
-	if (!xlSheetWriteBool(self->handler, row, col, PyObject_IsTrue(val), 0))
-		Py_RETURN_FALSE;
+	if (!xlSheetWriteBool(self->handler, row, col, PyObject_IsTrue(val),
+				fmt ? fmt->handler : NULL)) Py_RETURN_FALSE;
 	Py_RETURN_TRUE;
 }
 
@@ -183,11 +181,12 @@ static PyObject *
 write_blank(XLPySheet *self, PyObject *args)
 {
 	int row, col;
-	if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+	XLPyFormat *fmt = NULL;
+	if(!PyArg_ParseTuple(args, "ii|O!", &row, &col, &XLPyFormatType, &fmt))
+		return NULL;
 
-	if (!xlSheetWriteBlank(self->handler, row, col, 0)) {
-		Py_RETURN_FALSE;
-	}
+	if (!xlSheetWriteBlank(self->handler, row, col,
+				fmt ? fmt->handler : NULL)) Py_RETURN_FALSE;
 	Py_RETURN_TRUE;
 }
 
@@ -212,11 +211,12 @@ write_formula(XLPySheet *self, PyObject *args)
 {
 	int row, col;
 	const char *val;
-	if(!PyArg_ParseTuple(args, "iis", &row, &col, &val)) return NULL;
+	XLPyFormat *fmt = NULL;
+	if(!PyArg_ParseTuple(args, "iis|O!", &row, &col, &val, &XLPyFormatType,
+				&fmt)) return NULL;
 
-	if (!xlSheetWriteFormula(self->handler, row, col, val, 0)) {
-		Py_RETURN_FALSE;
-	}
+	if (!xlSheetWriteFormula(self->handler, row, col, val,
+				fmt ? fmt->handler : NULL)) Py_RETURN_FALSE;
 	Py_RETURN_TRUE;
 }
 

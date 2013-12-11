@@ -48,6 +48,9 @@ class TestSheet(unittest.TestCase):
 
         self.assertTrue(
                 self.sheet.writeStr(1, 0, "Hello World"))
+        
+        (txt, fmt) = self.sheet.readStr(1, 0)
+        self.sheet.writeStr(1, 0, "Hello with Format", fmt)
 
     def test_readNum(self):
         self.sheet.writeNum(3, 3, 200)
@@ -65,6 +68,9 @@ class TestSheet(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.sheet.writeNum(1, 1, "twenty")
 
+        (num, fmt) = self.sheet.readNum(1, 1)
+        self.sheet.writeNum(1, 1, 10, fmt)
+
     def test_readBool(self):
         self.assertTrue(self.sheet.writeBool(3, 3, False))
         self.assertFalse(self.sheet.readBool(3, 3)[0])
@@ -77,6 +83,9 @@ class TestSheet(unittest.TestCase):
         self.assertFalse(self.sheet.writeBool(0, 0, True))
         self.assertTrue(self.sheet.writeBool(1, 1, True))
         self.assertTrue(self.sheet.writeBool(1, 1, False))
+        
+        (val, fmt) = self.sheet.readBool(1, 1)
+        self.sheet.writeBool(3, 3, True, fmt)
 
     def test_readBlank(self):
         (val, fmt) = self.sheet.readBlank(0, 0)

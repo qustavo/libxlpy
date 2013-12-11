@@ -446,6 +446,25 @@ class TestSheet(unittest.TestCase):
         self.sheet.setMarginBottom(margin)
         self.assertEquals(margin, self.sheet.marginBottom())
 
+    def test_printRowCol(self):
+        self.assertIsInstance(self.sheet.printRowCol(), bool)
+
+    def test_setPrintRowCol(self):
+        self.sheet.setPrintRowCol(True)
+        self.assertTrue(self.sheet.printRowCol())
+
+        self.sheet.setPrintRowCol(False)
+        self.assertFalse(self.sheet.printRowCol())
+
+    def test_setPrintRepeatedRows(self):
+        self.assertIsNone( self.sheet.setPrintRepeatedRows(1, 10) )
+
+    def test_setPrintRepeatedCols(self):
+        self.assertIsNone( self.sheet.setPrintRepeatedCols(1, 10) )
+
+    def test_setPrintArea(self):
+        self.assertIsNone( self.sheet.setPrintArea(1, 10, 1, 10) )
+
     def test_getNamedRange(self):
         self.assertIsNone(self.sheet.getNamedRange("foo"))
 

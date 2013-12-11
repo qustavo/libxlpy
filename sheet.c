@@ -962,6 +962,56 @@ set_margin_bottom(XLPySheet *self, PyObject *args)
 }
 
 static PyObject *
+print_row_col(XLPySheet *self)
+{
+	if(xlSheetPrintRowCol(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_print_row_col(XLPySheet *self, PyObject *args)
+{
+	PyObject *print;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &print)) return NULL;
+
+	xlSheetSetPrintRowCol(self->handler, PyObject_IsTrue(print));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+set_printed_repeated_rows(XLPySheet *self, PyObject *args)
+{
+	int first, last;
+	if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+
+	xlSheetSetPrintRepeatRows(self->handler, first, last);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+set_printed_repeated_cols(XLPySheet *self, PyObject *args)
+{
+	int first, last;
+	if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+
+	xlSheetSetPrintRepeatCols(self->handler, first, last);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+set_print_area(XLPySheet *self, PyObject *args)
+{
+	int rowFirst, rowLast, colFirst, colLast;
+	if(!PyArg_ParseTuple(args, "iiii",
+				&rowFirst, &rowLast, &colFirst, &colLast)) return NULL;
+
+	xlSheetSetPrintArea(self->handler, rowFirst, rowLast, colFirst, colLast);
+	Py_RETURN_NONE;
+}
+
+
+static PyObject *
 clear_print_repeats(XLPySheet *self)
 {
     xlSheetClearPrintRepeats(self->handler);
@@ -1356,6 +1406,16 @@ static PyMethodDef methods[] = {
 		"Returns the bottom margin of the sheet in inches."},
 	{"setMarginBottom", (PyCFunction) set_margin_bottom, METH_VARARGS,
 		"Sets the bottom margin of the sheet in inches."},
+	{"printRowCol", (PyCFunction) print_row_col, METH_NOARGS,
+		"Returns whether the row and column headers are printed."},
+	{"setPrintRowCol", (PyCFunction) set_print_row_col, METH_VARARGS,
+		"Sets a flag that the row and column headers are printed"},
+	{"setPrintRepeatedRows", (PyCFunction) set_printed_repeated_rows, METH_VARARGS,
+		"Sets repeated rows on each page from rowFirst to rowLast"},
+	{"setPrintRepeatedCols", (PyCFunction) set_printed_repeated_cols, METH_VARARGS,
+		"Sets repeated cols on each page from rowFirst to rowLast"},
+	{"setPrintArea", (PyCFunction) set_print_area, METH_VARARGS,
+		"Sets the print area."},
 
     {"clearPrintRepeats", (PyCFunction) clear_print_repeats, METH_NOARGS,
         "Clears repeated rows and columns on each page."},

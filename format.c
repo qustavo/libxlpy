@@ -2,6 +2,11 @@
 #include <libxl.h>
 
 #include "format.h"
+#include "font.h"
+
+extern PyTypeObject XLPyFontType;
+
+typedef void(op_t)(FormatHandle, int);
 
 static int
 init(XLPyFormat *self)
@@ -16,6 +21,37 @@ dealloc(XLPyFormat *self)
 }
 
 static PyObject *
+generic_set(XLPyFormat *self, PyObject *args, op_t op)
+{
+	int val;
+	PyArg_ParseTuple(args, "i", &val);
+	op(self->handler, val);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+font(XLPyFormat *self)
+{
+	FontHandle font = xlFormatFont(self->handler);
+	if(!font) Py_RETURN_NONE;
+
+	XLPyFont *obj = PyObject_New(XLPyFont, &XLPyFontType);
+	obj->handler = font;
+	return (PyObject *)obj;
+}
+
+static PyObject *
+set_font(XLPyFormat *self, PyObject *args)
+{
+	PyObject *font;
+	if(!PyArg_ParseTuple(args, "O!", &XLPyFontType, &font)) return NULL;
+
+	if(xlFormatSetFont(self->handler, ((XLPyFont *)font)->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
 num_format(XLPyFormat *self)
 {
     return Py_BuildValue("i",
@@ -25,19 +61,55 @@ num_format(XLPyFormat *self)
 static PyObject *
 set_num_format(XLPyFormat *self, PyObject *args)
 {
-	int num;
-	PyArg_ParseTuple(args, "i", &num);
-	xlFormatSetNumFormat(self->handler, num);
-	Py_RETURN_NONE;
+	return generic_set(self, args, xlFormatSetNumFormat);
+}
+
+static PyObject *
+align_h(XLPyFormat *self)
+{
+	return Py_BuildValue("i", xlFormatAlignH(self->handler));
+}
+
+static PyObject *
+set_align_h(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetAlignH);
+}
+
+static PyObject *
+align_v(XLPyFormat *self)
+{
+	return Py_BuildValue("i", xlFormatAlignV(self->handler));
+}
+
+static PyObject *
+set_align_v(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetAlignV);
 }
 
 static PyMethodDef methods[] = {
+	{"font", (PyCFunction) font, METH_NOARGS,
+		"Returns the handle of the current font. "
+		"Returns None if error occurs."},
+	{"setFont", (PyCFunction) set_font, METH_VARARGS,
+		"Sets the font for the format. "
+		"To create a new font use Book::addFont()"},
     {"numFormat", (PyCFunction) num_format, METH_NOARGS,
         "Returns the number format identifier."},
 	{"setNumFormat", (PyCFunction) set_num_format, METH_VARARGS,
 		"Sets the number format identifier. "
 		"The identifier must be a valid built-in number format identifier or the identifier of a custom number format. "
 		"To create a custom format use Book::AddCustomNumFormat()"},
+	{"alignH", (PyCFunction) align_h, METH_NOARGS,
+		"Returns the horizontal alignment."},
+	{"setAlignH", (PyCFunction) set_align_h, METH_VARARGS,
+		"Sets the horizontal alignment."},
+	{"alignV", (PyCFunction) align_v, METH_NOARGS,
+		"Returns the vertical alignment."},
+	{"setAlignV", (PyCFunction) set_align_v, METH_VARARGS,
+		"Sets the vertical alignment."},
+
 	{NULL}
 };
 

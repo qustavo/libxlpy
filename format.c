@@ -88,6 +88,109 @@ set_align_v(XLPyFormat *self, PyObject *args)
 	return generic_set(self, args, xlFormatSetAlignV);
 }
 
+static PyObject *
+wrap(XLPyFormat *self)
+{
+	if(xlFormatWrap(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_wrap(XLPyFormat *self, PyObject *args)
+{
+	PyObject *wrap;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &wrap)) return NULL;
+
+	xlFormatSetWrap(self->handler, PyObject_IsTrue(wrap));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+rotation(XLPyFormat *self)
+{
+	return Py_BuildValue("i", xlFormatRotation(self->handler));
+}
+
+static PyObject *
+set_rotation(XLPyFormat *self, PyObject *args)
+{
+	int rotation;
+	if(!PyArg_ParseTuple(args, "i", &rotation)) return NULL;
+
+	return Py_BuildValue("i", xlFormatSetRotation(self->handler, rotation));
+}
+
+static PyObject *
+indent(XLPyFormat *self)
+{
+	return Py_BuildValue("i", xlFormatIndent(self->handler));
+}
+
+static PyObject *
+set_indent(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetIndent);
+}
+
+
+static PyObject *
+shrink_to_fit(XLPyFormat *self)
+{
+	if(xlFormatShrinkToFit(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_shrink_to_fit(XLPyFormat *self, PyObject *args)
+{
+	PyObject *shrink;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &shrink)) return NULL;
+	xlFormatSetShrinkToFit(self->handler, PyObject_IsTrue(shrink));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+set_border(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetBorder);
+}
+
+
+#define GET_BORDER(name, fn) static PyObject *\
+	border_##name(XLPyFormat *self) {\
+		return Py_BuildValue("i", fn(self->handler));\
+	}
+
+#define SET_BORDER(name, fn) static PyObject *\
+	set_border_##name(XLPyFormat *self, PyObject *args) {\
+		return generic_set(self, args, fn);\
+	}
+
+GET_BORDER(left,           xlFormatBorderLeft)
+GET_BORDER(right,          xlFormatBorderRight)
+GET_BORDER(top,            xlFormatBorderTop)
+GET_BORDER(bottom,         xlFormatBorderBottom)
+GET_BORDER(left_color,     xlFormatBorderLeftColor)
+GET_BORDER(right_color,    xlFormatBorderRightColor)
+GET_BORDER(top_color,      xlFormatBorderTopColor)
+GET_BORDER(bottom_color,   xlFormatBorderBottomColor)
+GET_BORDER(diagonal,       xlFormatBorderDiagonal)
+GET_BORDER(diagonal_color, xlFormatBorderDiagonalColor)
+
+SET_BORDER(color,          xlFormatSetBorderColor)
+SET_BORDER(left,           xlFormatSetBorderLeft)
+SET_BORDER(right,          xlFormatSetBorderRight)
+SET_BORDER(top,            xlFormatSetBorderTop)
+SET_BORDER(bottom,         xlFormatSetBorderBottom)
+SET_BORDER(left_color,     xlFormatSetBorderLeftColor)
+SET_BORDER(right_color,    xlFormatSetBorderRightColor)
+SET_BORDER(top_color,      xlFormatSetBorderTopColor)
+SET_BORDER(bottom_color,   xlFormatSetBorderBottomColor)
+SET_BORDER(diagonal,       xlFormatSetBorderDiagonal)
+SET_BORDER(diagonal_color, xlFormatSetBorderDiagonalColor)
+
 static PyMethodDef methods[] = {
 	{"font", (PyCFunction) font, METH_NOARGS,
 		"Returns the handle of the current font. "
@@ -109,6 +212,81 @@ static PyMethodDef methods[] = {
 		"Returns the vertical alignment."},
 	{"setAlignV", (PyCFunction) set_align_v, METH_VARARGS,
 		"Sets the vertical alignment."},
+	{"wrap", (PyCFunction) wrap, METH_NOARGS,
+		"Returns whether the cell text is wrapped: "
+		"True - wrapped, False - not wrapped"},
+	{"setWrap", (PyCFunction) set_wrap, METH_VARARGS,
+		"Sets the flag whether the cell text is wrapped: "
+		"True - wrapped, False - not wrapped."},
+	{"rotation", (PyCFunction) rotation, METH_NOARGS,
+		"Returns the text rotation."},
+	{"setRotation", (PyCFunction) set_rotation, METH_VARARGS,
+		"Sets the text rotation."},
+	{"indent", (PyCFunction) indent, METH_NOARGS,
+		"Returns the text indentation level."},
+	{"setIndent", (PyCFunction) set_indent, METH_VARARGS,
+		"Sets the text indentation level. Must be less than or equal to 15."},
+	{"shrinkToFit", (PyCFunction) shrink_to_fit, METH_NOARGS,
+		"Returns whether the cell is shrink-to-fit: "
+		"True - shrink-to-fit, False - not shrink-to-fit."},
+	{"setShrinkToFit", (PyCFunction) set_shrink_to_fit, METH_VARARGS,
+		"Sets the flag whether the cell is shrink-to-fit: "
+		"False - shrink-to-fit, True - not shrink-to-fit"},
+
+	{"setBorder", (PyCFunction) set_border, METH_VARARGS,
+		"Sets the border style."},
+	{"setBorderColor", (PyCFunction) set_border_color, METH_VARARGS,
+		"Sets the border color"},
+
+	{"borderLeft", (PyCFunction) border_left, METH_NOARGS,
+		"Returns the left border style."},
+	{"setBorderLeft", (PyCFunction) set_border_left, METH_VARARGS,
+		"Sets the left border style."},
+
+	{"borderRight", (PyCFunction) border_right, METH_NOARGS,
+		"Returns the right border style."},
+	{"setBorderRight", (PyCFunction) set_border_right, METH_VARARGS,
+		"Sets the right border style."},
+
+	{"borderTop", (PyCFunction) border_top, METH_NOARGS,
+		"Returns the top border style."},
+	{"setBorderTop", (PyCFunction) set_border_top, METH_VARARGS,
+		"Sets the top border style."},
+
+	{"borderBottom", (PyCFunction) border_bottom, METH_NOARGS,
+		"Returns the bottom border style."},
+	{"setBorderBottom", (PyCFunction) set_border_bottom, METH_VARARGS,
+		"Sets the bottom border style."},
+
+	{"borderLeftColor", (PyCFunction) border_left_color, METH_NOARGS,
+		"Returns the color of the left border."},
+	{"setBorderLeftColor", (PyCFunction) set_border_left_color, METH_VARARGS,
+		"Sets the color of the left border."},
+
+	{"borderRightColor", (PyCFunction) border_right_color, METH_NOARGS,
+		"Returns the color of the right border."},
+	{"setBorderRightColor", (PyCFunction) set_border_right_color, METH_VARARGS,
+		"Sets the color of the right border."},
+
+	{"borderTopColor", (PyCFunction) border_top_color, METH_NOARGS,
+		"Returns the color of the top border."},
+	{"setBorderTopColor", (PyCFunction) set_border_top_color, METH_VARARGS,
+		"Sets the color of the top border."},
+
+	{"borderBottomColor", (PyCFunction) border_bottom_color, METH_NOARGS,
+		"Returns the color of the bottom border."},
+	{"setBorderBottomColor", (PyCFunction) set_border_bottom_color, METH_VARARGS,
+		"Sets the color of the bottom border."},
+
+	{"borderDiagonal", (PyCFunction) border_diagonal, METH_NOARGS,
+		"Returns the diagonal border."},
+	{"setBorderDiagonal", (PyCFunction) set_border_diagonal, METH_VARARGS,
+		"Sets the diagonal border."},
+
+	{"borderDiagonalColor", (PyCFunction) border_diagonal_color, METH_NOARGS,
+		"Returns the color of the diagonal border."},
+	{"setBorderDiagonalColor", (PyCFunction) set_border_diagonal_color, METH_VARARGS,
+		"Sets the color of the diagonal border."},
 
 	{NULL}
 };

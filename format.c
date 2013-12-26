@@ -191,6 +191,82 @@ SET_BORDER(bottom_color,   xlFormatSetBorderBottomColor)
 SET_BORDER(diagonal,       xlFormatSetBorderDiagonal)
 SET_BORDER(diagonal_color, xlFormatSetBorderDiagonalColor)
 
+static PyObject *
+fill_pattern(XLPyFormat *self)
+{
+	return Py_BuildValue("i", xlFormatFillPattern(self->handler));
+}
+
+static PyObject *
+set_fill_pattern(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetFillPattern);
+}
+
+static PyObject *
+pattern_foreground_color(XLPyFormat *self)
+{
+	return Py_BuildValue("i",
+		xlFormatPatternForegroundColor(self->handler)
+	);
+}
+
+static PyObject *
+set_pattern_foreground_color(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetPatternForegroundColor);
+}
+
+static PyObject *
+pattern_background_color(XLPyFormat *self)
+{
+	return Py_BuildValue("i",
+		xlFormatPatternBackgroundColor(self->handler)
+	);
+}
+
+static PyObject *
+set_pattern_background_color(XLPyFormat *self, PyObject *args)
+{
+	return generic_set(self, args, xlFormatSetPatternBackgroundColor);
+}
+
+static PyObject *
+locked(XLPyFormat *self)
+{
+	if(xlFormatLocked(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_locked(XLPyFormat *self, PyObject *args)
+{
+	PyObject *locked;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &locked)) return NULL;
+
+	xlFormatSetLocked(self->handler, PyObject_IsTrue(locked));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+set_hidden(XLPyFormat *self, PyObject *args)
+{
+	PyObject *hidden;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &hidden)) return NULL;
+
+	xlFormatSetHidden(self->handler, PyObject_IsTrue(hidden));
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+hidden(XLPyFormat *self)
+{
+	if(xlFormatHidden(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
 static PyMethodDef methods[] = {
 	{"font", (PyCFunction) font, METH_NOARGS,
 		"Returns the handle of the current font. "
@@ -287,6 +363,29 @@ static PyMethodDef methods[] = {
 		"Returns the color of the diagonal border."},
 	{"setBorderDiagonalColor", (PyCFunction) set_border_diagonal_color, METH_VARARGS,
 		"Sets the color of the diagonal border."},
+
+	{"fillPattern", (PyCFunction) fill_pattern, METH_NOARGS,
+		"Returns the fill pattern."},
+	{"setFillPattern", (PyCFunction) set_fill_pattern, METH_VARARGS,
+		"Sets the fill pattern."},
+
+	{"patternForegroundColor", (PyCFunction) pattern_foreground_color, METH_NOARGS,
+		"Returns the foreground color of the fill pattern."},
+	{"setPatterForegroundColor", (PyCFunction) set_pattern_foreground_color, METH_VARARGS,
+		"Sets the foreground color of the fill pattern."},
+	{"patternBackgroundColor", (PyCFunction) pattern_background_color, METH_NOARGS,
+		"Returns the background color of the fill pattern."},
+	{"setPatterBackgroundColor", (PyCFunction) set_pattern_background_color, METH_VARARGS,
+		"Sets the background color of the fill pattern."},
+
+	{"locked", (PyCFunction) locked, METH_NOARGS,
+		"Returns whether the locked protection property is set to True or False"},
+	{"setLocked", (PyCFunction) set_locked, METH_VARARGS,
+		"Sets the locked protection property: True or False."},
+	{"hidden", (PyCFunction) hidden, METH_NOARGS,
+		"Returns whether the hidden protection property is set to True or False"},
+	{"setHidden", (PyCFunction) set_hidden, METH_VARARGS,
+		"Sets the hidden protection property: True or False"},
 
 	{NULL}
 };

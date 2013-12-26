@@ -15,11 +15,11 @@ class TestFormat(unittest.TestCase):
         self.assertTrue(self.format.setFont(font))
 
     def test_numFormat(self):
-        self.assertEqual(0, self.format.numFormat())
+        self.assertEquals(0, self.format.numFormat())
 
     def test_setNumFormat(self):
         self.format.setNumFormat(NUMFORMAT_ACCOUNT)
-        self.assertEqual(NUMFORMAT_ACCOUNT, self.format.numFormat())
+        self.assertEquals(NUMFORMAT_ACCOUNT, self.format.numFormat())
 
     def test_formatAlignH(self):
         self.assertIsInstance(self.format.alignH(), int)
@@ -118,6 +118,39 @@ class TestFormat(unittest.TestCase):
         self.assertEquals(BORDERDIAGONAL_UP, self.format.borderDiagonal())
         self.assertEquals(COLOR_PLUM, self.format.borderDiagonalColor())
 
+    def test_fillPattern(self):
+        self.assertIsInstance(self.format.fillPattern(), int)
+
+    def test_setFillPattern(self):
+        self.format.setFillPattern(FILLPATTERN_THINVERSTRIPE)
+        self.assertEquals(FILLPATTERN_THINVERSTRIPE, self.format.fillPattern())
+
+    def test_setPatternColor(self):
+        self.format.setPatterForegroundColor(COLOR_GRAY25)
+        self.format.setPatterBackgroundColor(COLOR_GRAY50)
+
+        self.assertEquals(COLOR_GRAY25, self.format.patternForegroundColor());
+        self.assertEquals(COLOR_GRAY50, self.format.patternBackgroundColor());
+
+    def test_locked(self):
+        self.assertIsInstance(self.format.locked(), bool)
+
+    def test_setLocked(self):
+        self.format.setLocked(True)
+        self.assertTrue(self.format.locked())
+
+        self.format.setLocked(False)
+        self.assertFalse(self.format.locked())
+
+    def test_hidden(self):
+        self.assertIsInstance(self.format.hidden(), bool)
+
+    def test_setHidden(self):
+        self.format.setHidden(True)
+        self.assertTrue(self.format.hidden())
+
+        self.format.setLocked(False)
+        self.assertFalse(self.format.locked())
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,7 +8,7 @@ module = Extension('libxlpy'
             'format.c',
             'font.c'
             ]
-        , extra_link_args = ['-lxl']
+        , libraries = ['xl']
         )
  
 setup (name = 'libxlpy'

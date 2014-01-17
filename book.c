@@ -11,11 +11,25 @@ extern PyTypeObject XLPyFormatType;
 extern PyTypeObject XLPyFontType;
 
 static int
-init(XLPyBook *self)
+init(XLPyBook *self, PyObject *args)
 {
-	self->handler = xlCreateBook();
+	PyObject *val = NULL;
+    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) {
+    	self->handler = xlCreateBook();
+    	return 0;
+    } 
+
+    if (PyObject_IsTrue(val)) {
+    	self->handler = xlCreateXMLBook();
+    }
+    else {
+		self->handler = xlCreateBook();
+	}
+
     return 0;
 }
+
+
 
 static void
 dealloc(XLPyBook *self)

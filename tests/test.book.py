@@ -3,7 +3,7 @@ from libxlpy import *
 
 class TestBook(unittest.TestCase):
     def setUp(self):
-        self.book = Book()
+        self.book = Book(False)
 
     def test_load(self):
         self.assertTrue(

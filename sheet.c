@@ -703,6 +703,7 @@ set_display_gridlines(XLPySheet *self, PyObject *args)
 
 	xlSheetSetDisplayGridlines(self->handler, PyObject_IsTrue(show));
 	Py_DECREF(show);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -721,6 +722,7 @@ set_print_gridlines(XLPySheet *self, PyObject *args)
 
 	xlSheetSetPrintGridlines(self->handler, PyObject_IsTrue(print));
 	Py_DECREF(print);
+	Py_RETURN_NONE;
 }
 
 static PyObject *

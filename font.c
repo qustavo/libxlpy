@@ -38,7 +38,7 @@ get(XLPyFont *self, get_t fn, int boolean)
 
 #define GET(name, fn, b) static PyObject *\
 	name(XLPyFont *self) {\
-		get(self, fn, b);\
+		return get(self, fn, b);\
 	}
 
 #define SET(name, fn) static PyObject *\

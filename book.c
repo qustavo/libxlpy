@@ -10,23 +10,21 @@ extern PyTypeObject XLPySheetType;
 extern PyTypeObject XLPyFormatType;
 extern PyTypeObject XLPyFontType;
 
-static int
+static PyObject *
 init(XLPyBook *self, PyObject *args)
 {
-	PyObject *val = NULL;
-    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) {
-    	self->handler = xlCreateBook();
-    	return 0;
-    } 
+    int *bookType = 0;
 
-    if (PyObject_IsTrue(val)) {
-    	self->handler = xlCreateXMLBook();
+    if(!PyArg_ParseTuple(args, "|i", &bookType)) return NULL;
+
+    if (bookType == 0) {
+        self->handler = xlCreateBook();
     }
     else {
-		self->handler = xlCreateBook();
-	}
+        self->handler = xlCreateXMLBook();
+    }
 
-    return 0;
+    Py_RETURN_NONE;
 }
 
 
@@ -93,7 +91,7 @@ add_sheet(XLPyBook *self, PyObject *args)
 	PyObject *initSheet = NULL;
 	if(!PyArg_ParseTuple(args, "s|O!", &name, &XLPySheetType, &initSheet))
 		return NULL;
-	
+
 	SheetHandle sheet = xlBookAddSheet(self->handler, name,
 			(NULL == initSheet) ? NULL : ((XLPySheet *)initSheet)->handler);
 
@@ -155,7 +153,7 @@ add_format(XLPyBook *self, PyObject *args)
 			(NULL == initFormat) ? NULL : ((XLPyFormat *)initFormat)->handler);
 
 	if (!format) Py_RETURN_NONE;
-	
+
 	XLPyFormat *obj = PyObject_New(XLPyFormat, &XLPyFormatType);
 	obj->handler = format;
 	return (PyObject *)obj;
@@ -170,7 +168,7 @@ add_font(XLPyBook *self, PyObject *args)
 			(NULL == initFont) ? NULL : ((XLPyFont *)initFont)->handler);
 
 	if (!font) Py_RETURN_NONE;
-	
+
 	XLPyFont *obj = PyObject_New(XLPyFont, &XLPyFontType);
 	obj->handler = font;
 	return (PyObject *)obj;

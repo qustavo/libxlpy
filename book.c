@@ -440,6 +440,28 @@ set_locale(XLPyBook *self, PyObject *args)
 	Py_RETURN_FALSE;
 }
 
+#if LIBXL_VERSION >= 0x03050401
+static PyObject *
+is_template(XLPyBook *self)
+{
+    if (xlBookIsTemplate(self->handler) == 1)
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_template(XLPyBook *self, PyObject *args)
+{
+    PyObject *bool;
+    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &bool)) return NULL;
+
+    xlBookSetTemplate(self->handler,PyObject_IsTrue(bool));
+    Py_RETURN_NONE;
+}
+#endif
+
+
+
 static PyObject *
 error_message(XLPyBook *self)
 {
@@ -555,6 +577,14 @@ static PyMethodDef methods[] = {
         "It accepts the special value \"UTF-8\" for using UTF-8 character encoding in Windows and other operating systems. "
 		"It has no effect for unicode projects with wide strings (with _UNICODE preprocessor variable). "
 		"Returns True if a valid locale argument is given."},
+#if LIBXL_VERSION >= 0x03050401
+    {"isTemplate", (PyCFunction) is_template, METH_NOARGS,
+        "Returns whether the workbook is template:"
+        "1 - workbook is template, 0 - workbook is not template."},
+    {"setTemplate", (PyCFunction) set_template, METH_VARARGS,
+        "Sets the template flag: 1 - workbook is template, 0 - workbook is not template (default)."
+        "This flag must have a value \"true\" for template files (xlt and xltx)."},
+#endif
 	{"errorMessage", (PyCFunction) error_message, METH_NOARGS,
 		"Returns the last error message."},
 	{NULL}

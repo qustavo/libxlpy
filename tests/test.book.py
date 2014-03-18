@@ -210,5 +210,13 @@ class TestBook(unittest.TestCase):
         self.book.load('ThereIsNoSuchFile.xls')
         self.assertNotEqual('ok', self.book.errorMessage())
 
+    def test_isTemplate(self):
+        self.assertEqual(0, self.book.isTemplate())
+
+    def test_setTemplate(self):
+        self.book.setTemplate(True)
+        self.assertEqual(1, self.book.isTemplate())
+
+
 if __name__ == '__main__':
     unittest.main()

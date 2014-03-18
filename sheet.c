@@ -11,7 +11,7 @@ enum Position { LEFT, RIGHT, TOP, BOTTOM };
 static int
 init(XLPySheet *self)
 {
-    return 0;
+	return 0;
 }
 
 static void
@@ -23,20 +23,20 @@ dealloc(XLPySheet *self)
 static PyObject *
 cell_type(XLPySheet *self, PyObject *args)
 {
-    int row, col;
-    if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
-    return Py_BuildValue("i",
-            xlSheetCellType(self->handler, row, col));
+	int row, col;
+	if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+	return Py_BuildValue("i",
+			xlSheetCellType(self->handler, row, col));
 }
 
 static PyObject *
 is_formula(XLPySheet *self, PyObject *args)
 {
-    int row, col;
-    if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
-    if (xlSheetIsFormula(self->handler, row, col))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	int row, col;
+	if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+	if (xlSheetIsFormula(self->handler, row, col))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
@@ -449,33 +449,33 @@ get_picture(XLPySheet *self, PyObject *args)
 static PyObject *
 set_picture(XLPySheet *self, PyObject *args)
 {
-    int row, col, pictureId;
-    double scale;
-    int offset_x, offset_y;
-    if(!PyArg_ParseTuple(args, "iiidii",
-                &row, &col, &pictureId, &scale, &offset_x, &offset_y)) {
-        return NULL;
-    }
+	int row, col, pictureId;
+	double scale;
+	int offset_x, offset_y;
+	if(!PyArg_ParseTuple(args, "iiidii",
+				&row, &col, &pictureId, &scale, &offset_x, &offset_y)) {
+		return NULL;
+	}
 
-    xlSheetSetPicture(self->handler, row, col,
-            pictureId, scale, offset_x, offset_y);
-    Py_RETURN_NONE;
+	xlSheetSetPicture(self->handler, row, col,
+			pictureId, scale, offset_x, offset_y);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
 set_picture_2(XLPySheet *self, PyObject *args)
 {
-    int row, col, pictureId;
-    int width, height;
-    int offset_x, offset_y;
-    if(!PyArg_ParseTuple(args, "iiiiiii", &row, &col, &pictureId,
-                &width, &height, &offset_x, &offset_y)) {
-        return NULL;
-    }
+	int row, col, pictureId;
+	int width, height;
+	int offset_x, offset_y;
+	if(!PyArg_ParseTuple(args, "iiiiiii", &row, &col, &pictureId,
+				&width, &height, &offset_x, &offset_y)) {
+		return NULL;
+	}
 
-    xlSheetSetPicture2(self->handler, row, col,
-            pictureId, width, height, offset_x, offset_y);
-    Py_RETURN_NONE;
+	xlSheetSetPicture2(self->handler, row, col,
+			pictureId, width, height, offset_x, offset_y);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -531,35 +531,35 @@ set_ver_page_break(XLPySheet *self, PyObject *args)
 static PyObject *
 split(XLPySheet *self, PyObject *args)
 {
-    int row, col;
-    if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
+	int row, col;
+	if(!PyArg_ParseTuple(args, "ii", &row, &col)) return NULL;
 
-    xlSheetSplit(self->handler, row, col);
-    Py_RETURN_NONE;
+	xlSheetSplit(self->handler, row, col);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
 group_rows(XLPySheet *self, PyObject *args)
 {
-    int rowFirst, rowLast;
-    PyObject *collapsed;
-    if(!PyArg_ParseTuple(args, "iiO!", &rowFirst, &rowLast, &PyBool_Type, &collapsed)) return NULL;
+	int rowFirst, rowLast;
+	PyObject *collapsed;
+	if(!PyArg_ParseTuple(args, "iiO!", &rowFirst, &rowLast, &PyBool_Type, &collapsed)) return NULL;
 
-    if(xlSheetGroupRows(self->handler, rowFirst, rowLast,
-    			PyObject_IsTrue(collapsed))) Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetGroupRows(self->handler, rowFirst, rowLast,
+				PyObject_IsTrue(collapsed))) Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 group_cols(XLPySheet *self, PyObject *args)
 {
-    int colFirst, colLast;
-    PyObject *collapsed;
-    if(!PyArg_ParseTuple(args, "iiO!", &colFirst, &colLast, &PyBool_Type, &collapsed)) return NULL;
+	int colFirst, colLast;
+	PyObject *collapsed;
+	if(!PyArg_ParseTuple(args, "iiO!", &colFirst, &colLast, &PyBool_Type, &collapsed)) return NULL;
 
-    if(xlSheetGroupCols(self->handler, colFirst, colLast,
-    			PyObject_IsTrue(collapsed))) Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetGroupCols(self->handler, colFirst, colLast,
+				PyObject_IsTrue(collapsed))) Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
@@ -610,81 +610,81 @@ clear(XLPySheet *self, PyObject *args)
 static PyObject *
 insert_row(XLPySheet *self, PyObject *args)
 {
-    int first, last;
-    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+	int first, last;
+	if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
 
-    if(xlSheetInsertRow(self->handler, first, last))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetInsertRow(self->handler, first, last))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 insert_col(XLPySheet *self, PyObject *args)
 {
-    int first, last;
-    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+	int first, last;
+	if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
 
-    if(xlSheetInsertCol(self->handler, first, last))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetInsertCol(self->handler, first, last))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 remove_row(XLPySheet *self, PyObject *args)
 {
-    int first, last;
-    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+	int first, last;
+	if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
 
-    if(xlSheetRemoveRow(self->handler, first, last))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetRemoveRow(self->handler, first, last))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 remove_col(XLPySheet *self, PyObject *args)
 {
-    int first, last;
-    if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
+	int first, last;
+	if(!PyArg_ParseTuple(args, "ii", &first, &last)) return NULL;
 
-    if(xlSheetRemoveCol(self->handler, first, last))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetRemoveCol(self->handler, first, last))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 copy_cell(XLPySheet *self, PyObject *args)
 {
-    int rowSrc, colSrc, rowDst, colDst;
-    if(!PyArg_ParseTuple(args, "iiii", &rowSrc, &colSrc, &rowDst, &colDst))
-        return NULL;
+	int rowSrc, colSrc, rowDst, colDst;
+	if(!PyArg_ParseTuple(args, "iiii", &rowSrc, &colSrc, &rowDst, &colDst))
+		return NULL;
 
-    if(xlSheetCopyCell(self->handler, rowSrc, colSrc, rowDst, colDst))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlSheetCopyCell(self->handler, rowSrc, colSrc, rowDst, colDst))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 first_row(XLPySheet *self)
 {
-    return Py_BuildValue("i", xlSheetFirstRow(self->handler));
+	return Py_BuildValue("i", xlSheetFirstRow(self->handler));
 }
 
 static PyObject *
 last_row(XLPySheet *self)
 {
-    return Py_BuildValue("i", xlSheetLastRow(self->handler));
+	return Py_BuildValue("i", xlSheetLastRow(self->handler));
 }
 
 static PyObject *
 first_col(XLPySheet *self)
 {
-    return Py_BuildValue("i", xlSheetFirstCol(self->handler));
+	return Py_BuildValue("i", xlSheetFirstCol(self->handler));
 }
 
 static PyObject *
 last_col(XLPySheet *self)
 {
-    return Py_BuildValue("i", xlSheetLastCol(self->handler));
+	return Py_BuildValue("i", xlSheetLastCol(self->handler));
 }
 
 static PyObject *
@@ -1016,15 +1016,15 @@ set_print_area(XLPySheet *self, PyObject *args)
 static PyObject *
 clear_print_repeats(XLPySheet *self)
 {
-    xlSheetClearPrintRepeats(self->handler);
-    Py_RETURN_NONE;
+	xlSheetClearPrintRepeats(self->handler);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
 clear_print_area(XLPySheet *self)
 {
-    xlSheetClearPrintArea(self->handler);
-    Py_RETURN_NONE;
+	xlSheetClearPrintArea(self->handler);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -1032,7 +1032,7 @@ get_named_range(XLPySheet *self, PyObject *args)
 {
 	const char *name;
 #if LIBXL_VERSION >= 0x03050401
-    int scopeId = SCOPE_WORKBOOK, hidden = 0;
+	int scopeId = SCOPE_WORKBOOK, hidden = 0;
 
 	if(!PyArg_ParseTuple(args, "s|l", &name, &scopeId)) return NULL;
 
@@ -1042,13 +1042,13 @@ get_named_range(XLPySheet *self, PyObject *args)
 
 	return Py_BuildValue("(iiiii)", rowFirst, rowLast, colFirst, colLast, hidden);
 #else
-    if(!PyArg_ParseTuple(args, "s|l", &name)) return NULL;
+	if(!PyArg_ParseTuple(args, "s|l", &name)) return NULL;
 
-    int rowFirst, rowLast, colFirst, colLast;
-    if(!xlSheetGetNamedRange(self->handler, name, &rowFirst, &rowLast,
-        &colFirst, &colLast)) Py_RETURN_NONE;
+	int rowFirst, rowLast, colFirst, colLast;
+	if(!xlSheetGetNamedRange(self->handler, name, &rowFirst, &rowLast,
+		&colFirst, &colLast)) Py_RETURN_NONE;
 
-    return Py_BuildValue("(iiii)", rowFirst, rowLast, colFirst, colLast);
+	return Py_BuildValue("(iiii)", rowFirst, rowLast, colFirst, colLast);
 #endif
 }
 
@@ -1058,7 +1058,7 @@ set_named_range(XLPySheet *self, PyObject *args)
 	const char *name;
 	int rowFirst, rowLast, colFirst, colLast;
 #if LIBXL_VERSION >= 0x03050401
-    int scopeId = SCOPE_WORKBOOK;
+	int scopeId = SCOPE_WORKBOOK;
 
 	if(!PyArg_ParseTuple(args, "siiii|i", &name, &rowFirst, &rowLast,
 		&colFirst, &colLast, &scopeId)) return NULL;
@@ -1066,11 +1066,11 @@ set_named_range(XLPySheet *self, PyObject *args)
 	int r = xlSheetSetNamedRange(self->handler, name, rowFirst, rowLast,
 		colFirst, colLast, scopeId);
 #else
-    if(!PyArg_ParseTuple(args, "siiii", &name, &rowFirst, &rowLast,
-        &colFirst, &colLast)) return NULL;
+	if(!PyArg_ParseTuple(args, "siiii", &name, &rowFirst, &rowLast,
+		&colFirst, &colLast)) return NULL;
 
-    int r = xlSheetSetNamedRange(self->handler, name, rowFirst, rowLast,
-        colFirst, colLast);
+	int r = xlSheetSetNamedRange(self->handler, name, rowFirst, rowLast,
+		colFirst, colLast);
 #endif
 
 	if(!r) Py_RETURN_NONE;
@@ -1082,15 +1082,15 @@ del_named_range(XLPySheet *self, PyObject *args)
 {
 	const char *name;
 #if LIBXL_VERSION >= 0x03050401
-    int scopeId = SCOPE_WORKBOOK;
+	int scopeId = SCOPE_WORKBOOK;
 
 	if(!PyArg_ParseTuple(args, "s|", &name, &scopeId)) return NULL;
 
 	if(xlSheetDelNamedRange(self->handler, name, scopeId)) Py_RETURN_TRUE;
 #else
-    if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
+	if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
 
-    if(xlSheetDelNamedRange(self->handler, name)) Py_RETURN_TRUE;
+	if(xlSheetDelNamedRange(self->handler, name)) Py_RETURN_TRUE;
 #endif
 	Py_RETURN_FALSE;
 }
@@ -1116,24 +1116,24 @@ named_range(XLPySheet *self, PyObject *args)
 
 	return Py_BuildValue("(siiiii)", range, rowFirst, rowLast, colFirst, colLast, scopeId);
 #else
-    int rowFirst, rowLast, colFirst, colLast;
-    const char *range = xlSheetNamedRange(self->handler, index,
-        &rowFirst, &rowLast, &colFirst, &colLast);
+	int rowFirst, rowLast, colFirst, colLast;
+	const char *range = xlSheetNamedRange(self->handler, index,
+		&rowFirst, &rowLast, &colFirst, &colLast);
 
-    return Py_BuildValue("(siiii)", range, rowFirst, rowLast, colFirst, colLast);
+	return Py_BuildValue("(siiii)", range, rowFirst, rowLast, colFirst, colLast);
 #endif
 }
 
 static PyObject *
 set_name(XLPySheet *self, PyObject *args)
 {
-    const char *name;
-    if(!PyArg_ParseTuple(args, "s", &name)) {
-        return NULL;
-    }
+	const char *name;
+	if(!PyArg_ParseTuple(args, "s", &name)) {
+		return NULL;
+	}
 
-    xlSheetSetName(self->handler, name);
-    Py_RETURN_NONE;
+	xlSheetSetName(self->handler, name);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -1204,10 +1204,10 @@ row_col_to_addr(XLPySheet *self, PyObject *args)
 }
 
 static PyMethodDef methods[] = {
-    {"cellType", (PyCFunction) cell_type, METH_VARARGS,
-        "Returns cell's type."},
-    {"isFormula", (PyCFunction) is_formula, METH_VARARGS,
-        "Checks that cell contains a formula."},
+	{"cellType", (PyCFunction) cell_type, METH_VARARGS,
+		"Returns cell's type."},
+	{"isFormula", (PyCFunction) is_formula, METH_VARARGS,
+		"Checks that cell contains a formula."},
 	{"cellFormat", (PyCFunction) cell_format, METH_VARARGS,
 		"Returns cell's format. It can be changed by user."},
 	{"setCellFormat", (PyCFunction) set_cell_format, METH_VARARGS,
@@ -1222,10 +1222,10 @@ static PyMethodDef methods[] = {
 		"Reads a number or date/time and its format from cell. "
 		"Use Book::dateUnpack() for extract date/time parts. "
 		"Returns a tuple with (num, format)."},
-    {"writeNum", (PyCFunction) write_num, METH_VARARGS,
-        "Writes a string into cell with specified format. "
-        "If format is not present then format is ignored. "
-        "Returns False if error occurs."},
+	{"writeNum", (PyCFunction) write_num, METH_VARARGS,
+		"Writes a string into cell with specified format. "
+		"If format is not present then format is ignored. "
+		"Returns False if error occurs."},
 	{"readBool", (PyCFunction) read_bool, METH_VARARGS,
 		"Reads a bool value and its format from cell. "
 		"If format is None then error occurs. "
@@ -1301,30 +1301,30 @@ static PyMethodDef methods[] = {
 		"offset_y - vertical offset of picture in pixels. "
 		"Use Book::getPicture() for extracting binary data of picture by workbook picture index. "
 		"Returns None if error occurs."},
-    {"setPicture", (PyCFunction) set_picture, METH_VARARGS,
-        "Sets a picture with pictureId identifier at position row and col with scale factor and offsets in pixels. "
-        "Use Book::addPicture() for getting picture identifier."},
-    {"setPicture2", (PyCFunction) set_picture_2, METH_VARARGS,
-        "Sets a picture with pictureId identifier at position row and col with custom size and offsets in pixels. "
-        "Use Book::addPicture() for getting a picture identifier."},
-    {"getHorPageBreak", (PyCFunction) get_hor_page_break, METH_VARARGS,
-    	"Returns row with horizontal page break at position index."},
-    {"getHorPageBreakSize", (PyCFunction) get_hor_page_break_size, METH_NOARGS,
-    	"Returns a number of horizontal page breaks in the sheet."},
-    {"getVerPageBreak", (PyCFunction) get_ver_page_break, METH_VARARGS,
-    	"Returns column with vertical page break at position index."},
-    {"getVerPageBreakSize", (PyCFunction) get_ver_page_break_size, METH_NOARGS,
-    	"Returns a number of vertical page breaks in the sheet."},
-    {"setHorPageBreak", (PyCFunction) set_hor_page_break, METH_VARARGS,
-    	"Sets/removes a horizontal page break (sets if True, removes if False). "
-    	"Returns False if error occurs."},
-    {"setVerPageBreak", (PyCFunction) set_ver_page_break, METH_VARARGS,
-    	"Sets/removes a vertical page break (sets if True, removes if False). "
-    	"Returns False if error occurs."},
-    {"split", (PyCFunction) split, METH_VARARGS,
-        "Splits a sheet at position (row, col)."},
-    {"groupRows", (PyCFunction) group_rows, METH_VARARGS,
-        "Groups rows from rowFirst to rowLast. Returns False if error occurs."},
+	{"setPicture", (PyCFunction) set_picture, METH_VARARGS,
+		"Sets a picture with pictureId identifier at position row and col with scale factor and offsets in pixels. "
+		"Use Book::addPicture() for getting picture identifier."},
+	{"setPicture2", (PyCFunction) set_picture_2, METH_VARARGS,
+		"Sets a picture with pictureId identifier at position row and col with custom size and offsets in pixels. "
+		"Use Book::addPicture() for getting a picture identifier."},
+	{"getHorPageBreak", (PyCFunction) get_hor_page_break, METH_VARARGS,
+		"Returns row with horizontal page break at position index."},
+	{"getHorPageBreakSize", (PyCFunction) get_hor_page_break_size, METH_NOARGS,
+		"Returns a number of horizontal page breaks in the sheet."},
+	{"getVerPageBreak", (PyCFunction) get_ver_page_break, METH_VARARGS,
+		"Returns column with vertical page break at position index."},
+	{"getVerPageBreakSize", (PyCFunction) get_ver_page_break_size, METH_NOARGS,
+		"Returns a number of vertical page breaks in the sheet."},
+	{"setHorPageBreak", (PyCFunction) set_hor_page_break, METH_VARARGS,
+		"Sets/removes a horizontal page break (sets if True, removes if False). "
+		"Returns False if error occurs."},
+	{"setVerPageBreak", (PyCFunction) set_ver_page_break, METH_VARARGS,
+		"Sets/removes a vertical page break (sets if True, removes if False). "
+		"Returns False if error occurs."},
+	{"split", (PyCFunction) split, METH_VARARGS,
+		"Splits a sheet at position (row, col)."},
+	{"groupRows", (PyCFunction) group_rows, METH_VARARGS,
+		"Groups rows from rowFirst to rowLast. Returns False if error occurs."},
 	{"groupCols", (PyCFunction) group_cols, METH_VARARGS,
 		"Groups columns from colFirst to colLast. Returns False if error occurs."},
 	{"groupSummaryBelow", (PyCFunction) group_summary_below, METH_NOARGS,
@@ -1339,29 +1339,29 @@ static PyMethodDef methods[] = {
 		"Sets a flag of grouping columns summary: True - right, False - left."},
 	{"clear", (PyCFunction) clear, METH_VARARGS,
 		"Clears cells in specified area."},
-    {"insertRow", (PyCFunction) insert_row, METH_VARARGS,
-        "Inserts rows from rowFirst to rowLast."
-        "Returns False if error occurs."},
-    {"insertCol", (PyCFunction) insert_col, METH_VARARGS,
-        "Inserts cols from colFirst to colLast."
-        "Returns False if error occurs."},
-    {"removeRow", (PyCFunction) remove_row, METH_VARARGS,
-        "Removes rows from rowFirst to rowLast."
-        "Returns False if error occurs."},
-    {"removeCol", (PyCFunction) remove_col, METH_VARARGS,
-        "Removes cols from colFirst to colLast."
-        "Returns False if error occurs."},
-    {"copyCell", (PyCFunction) copy_cell, METH_VARARGS,
-        "Copies cell with format from (rowSrc, colSrc) to (rowDst, colDst). "
-        "Returns False if error occurs."},
-    {"firstRow", (PyCFunction) first_row, METH_NOARGS,
-        "Returns the first row in the sheet that contains a used cell."},
-    {"lastRow", (PyCFunction) last_row, METH_NOARGS,
-        "Returns the zero-based index of the row after the last row in the sheet that contains a used cell."},
-    {"firstCol", (PyCFunction) first_col, METH_NOARGS,
-        "Returns the first column in the sheet that contains a used cell."},
-    {"lastCol", (PyCFunction) last_col, METH_NOARGS,
-        "Returns the zero-based index of the column after the last column in the sheet that contains a used cell."},
+	{"insertRow", (PyCFunction) insert_row, METH_VARARGS,
+		"Inserts rows from rowFirst to rowLast."
+		"Returns False if error occurs."},
+	{"insertCol", (PyCFunction) insert_col, METH_VARARGS,
+		"Inserts cols from colFirst to colLast."
+		"Returns False if error occurs."},
+	{"removeRow", (PyCFunction) remove_row, METH_VARARGS,
+		"Removes rows from rowFirst to rowLast."
+		"Returns False if error occurs."},
+	{"removeCol", (PyCFunction) remove_col, METH_VARARGS,
+		"Removes cols from colFirst to colLast."
+		"Returns False if error occurs."},
+	{"copyCell", (PyCFunction) copy_cell, METH_VARARGS,
+		"Copies cell with format from (rowSrc, colSrc) to (rowDst, colDst). "
+		"Returns False if error occurs."},
+	{"firstRow", (PyCFunction) first_row, METH_NOARGS,
+		"Returns the first row in the sheet that contains a used cell."},
+	{"lastRow", (PyCFunction) last_row, METH_NOARGS,
+		"Returns the zero-based index of the row after the last row in the sheet that contains a used cell."},
+	{"firstCol", (PyCFunction) first_col, METH_NOARGS,
+		"Returns the first column in the sheet that contains a used cell."},
+	{"lastCol", (PyCFunction) last_col, METH_NOARGS,
+		"Returns the zero-based index of the column after the last column in the sheet that contains a used cell."},
 	{"displayGridlines", (PyCFunction) display_gridlines, METH_NOARGS,
 		"Returns whether the gridlines are displayed. "
 		"Returns True if gridlines are displayed and False if aren't."},
@@ -1457,10 +1457,10 @@ static PyMethodDef methods[] = {
 	{"setPrintArea", (PyCFunction) set_print_area, METH_VARARGS,
 		"Sets the print area."},
 
-    {"clearPrintRepeats", (PyCFunction) clear_print_repeats, METH_NOARGS,
-        "Clears repeated rows and columns on each page."},
-    {"clearPrintArea", (PyCFunction) clear_print_area, METH_NOARGS,
-        "Clears the print area."},
+	{"clearPrintRepeats", (PyCFunction) clear_print_repeats, METH_NOARGS,
+		"Clears repeated rows and columns on each page."},
+	{"clearPrintArea", (PyCFunction) clear_print_area, METH_NOARGS,
+		"Clears the print area."},
 	{"getNamedRange", (PyCFunction) get_named_range, METH_VARARGS,
 		"Gets the named range coordianates by name. "
 		"Returns None if specified named range isn't found or error occurs."},
@@ -1473,8 +1473,8 @@ static PyMethodDef methods[] = {
 		"Returns the number of named ranges in the sheet."},
 	{"namedRange", (PyCFunction) named_range, METH_VARARGS,
 		"Gets the named range coordianates by index."},
-    {"setName", (PyCFunction) set_name, METH_VARARGS,
-        "Sets the name of the sheet."},
+	{"setName", (PyCFunction) set_name, METH_VARARGS,
+		"Sets the name of the sheet."},
 	{"protect", (PyCFunction) protect, METH_NOARGS,
 		"Returns whether sheet is protected"},
 	{"setProtect", (PyCFunction) set_protect, METH_VARARGS,

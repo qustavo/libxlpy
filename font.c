@@ -9,7 +9,7 @@ typedef int (get_t)(FontHandle);
 static int
 init(XLPyFont *self)
 {
-    return 0;
+	return 0;
 }
 
 static void

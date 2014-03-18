@@ -11,7 +11,7 @@ typedef void(op_t)(FormatHandle, int);
 static int
 init(XLPyFormat *self)
 {
-    return 0;
+	return 0;
 }
 
 static void
@@ -54,8 +54,8 @@ set_font(XLPyFormat *self, PyObject *args)
 static PyObject *
 num_format(XLPyFormat *self)
 {
-    return Py_BuildValue("i",
-            xlFormatNumFormat(self->handler));
+	return Py_BuildValue("i",
+			xlFormatNumFormat(self->handler));
 }
 
 static PyObject *
@@ -274,8 +274,8 @@ static PyMethodDef methods[] = {
 	{"setFont", (PyCFunction) set_font, METH_VARARGS,
 		"Sets the font for the format. "
 		"To create a new font use Book::addFont()"},
-    {"numFormat", (PyCFunction) num_format, METH_NOARGS,
-        "Returns the number format identifier."},
+	{"numFormat", (PyCFunction) num_format, METH_NOARGS,
+		"Returns the number format identifier."},
 	{"setNumFormat", (PyCFunction) set_num_format, METH_VARARGS,
 		"Sets the number format identifier. "
 		"The identifier must be a valid built-in number format identifier or the identifier of a custom number format. "

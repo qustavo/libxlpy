@@ -13,18 +13,18 @@ extern PyTypeObject XLPyFontType;
 static PyObject *
 init(XLPyBook *self, PyObject *args)
 {
-    int *bookType = 0;
+	int *bookType = 0;
 
-    if(!PyArg_ParseTuple(args, "|i", &bookType)) return NULL;
+	if(!PyArg_ParseTuple(args, "|i", &bookType)) return NULL;
 
-    if (bookType == 0) {
-        self->handler = xlCreateBook();
-    }
-    else {
-        self->handler = xlCreateXMLBook();
-    }
+	if (bookType == 0) {
+		self->handler = xlCreateBook();
+	}
+	else {
+		self->handler = xlCreateXMLBook();
+	}
 
-    Py_RETURN_NONE;
+	Py_RETURN_NONE;
 }
 
 
@@ -232,22 +232,22 @@ add_picture2(XLPyBook *self, PyObject *args)
 static PyObject *
 default_font(XLPyBook *self)
 {
-    const char *name;
-    int size;
-    name = xlBookDefaultFont(self->handler, &size);
-    if(!name) Py_RETURN_NONE;
-    return Py_BuildValue("(si)", name, size);
+	const char *name;
+	int size;
+	name = xlBookDefaultFont(self->handler, &size);
+	if(!name) Py_RETURN_NONE;
+	return Py_BuildValue("(si)", name, size);
 }
 
 static PyObject *
 set_default_font(XLPyBook *self, PyObject *args)
 {
-    const char *name;
-    int size;
-    if(!PyArg_ParseTuple(args, "si", &name, &size)) return NULL;
+	const char *name;
+	int size;
+	if(!PyArg_ParseTuple(args, "si", &name, &size)) return NULL;
 
-    xlBookSetDefaultFont(self->handler, name, size);
-    Py_RETURN_NONE;
+	xlBookSetDefaultFont(self->handler, name, size);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -314,108 +314,108 @@ font_size(XLPyBook *self)
 static PyObject *
 date_pack(XLPyBook *self, PyObject *args)
 {
-    int year, month, day, hour, min, sec, msec;
-    if(!PyArg_ParseTuple(args, "iiiiiii",
-                &year, &month, &day, &hour, &min, &sec, &msec)) {
-        return NULL;
-    }
+	int year, month, day, hour, min, sec, msec;
+	if(!PyArg_ParseTuple(args, "iiiiiii",
+				&year, &month, &day, &hour, &min, &sec, &msec)) {
+		return NULL;
+	}
 
-    double pack = xlBookDatePack(self->handler,
-            year, month, day, hour, min, sec, msec);
-    return Py_BuildValue("d", pack);
+	double pack = xlBookDatePack(self->handler,
+			year, month, day, hour, min, sec, msec);
+	return Py_BuildValue("d", pack);
 }
 
 static PyObject *
 date_unpack(XLPyBook *self, PyObject *args)
 {
-    double pack;
-    if(!PyArg_ParseTuple(args, "d", &pack)) return NULL;
+	double pack;
+	if(!PyArg_ParseTuple(args, "d", &pack)) return NULL;
 
-    int year, month, day, hour, min, sec, msec;
-    if(0 == xlBookDateUnpack(self->handler, pack,
-            &year, &month, &day, &hour, &min, &sec, &msec)) {
-        Py_RETURN_NONE;
-    }
+	int year, month, day, hour, min, sec, msec;
+	if(0 == xlBookDateUnpack(self->handler, pack,
+			&year, &month, &day, &hour, &min, &sec, &msec)) {
+		Py_RETURN_NONE;
+	}
 
-    return Py_BuildValue("(iiiiiii)",
-            year, month, day, hour, min, sec, msec);
+	return Py_BuildValue("(iiiiiii)",
+			year, month, day, hour, min, sec, msec);
 }
 
 static PyObject *
 color_pack(XLPyBook *self, PyObject *args)
 {
-    int r, g, b;
-    if(!PyArg_ParseTuple(args, "iii", &r, &g, &b)) return NULL;
-    return Py_BuildValue("i", xlBookColorPack(self->handler, r, g, b));
+	int r, g, b;
+	if(!PyArg_ParseTuple(args, "iii", &r, &g, &b)) return NULL;
+	return Py_BuildValue("i", xlBookColorPack(self->handler, r, g, b));
 }
 
 static PyObject *
 color_unpack(XLPyBook *self, PyObject *args)
 {
-    int color;
-    if(!PyArg_ParseTuple(args, "i", &color)) return NULL;
+	int color;
+	if(!PyArg_ParseTuple(args, "i", &color)) return NULL;
 
-    int r, g, b;
-    xlBookColorUnpack(self->handler, color, &r, &g, &b);
-    return Py_BuildValue("(iii)", r, g, b);
+	int r, g, b;
+	xlBookColorUnpack(self->handler, color, &r, &g, &b);
+	return Py_BuildValue("(iii)", r, g, b);
 }
 
 static PyObject *
 ref_r1_c1(XLPyBook *self)
 {
-    if(xlBookRefR1C1(self->handler))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlBookRefR1C1(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 set_ref_r1_c1(XLPyBook *self, PyObject *args)
 {
-    PyObject *val = NULL;
-    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) return NULL;
-    xlBookSetRefR1C1(self->handler, PyObject_IsTrue(val) ? 1 : 0);
-    Py_RETURN_NONE;
+	PyObject *val = NULL;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) return NULL;
+	xlBookSetRefR1C1(self->handler, PyObject_IsTrue(val) ? 1 : 0);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
 rgb_mode(XLPyBook *self)
 {
-    if(xlBookRgbMode(self->handler))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlBookRgbMode(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 set_rgb_mode(XLPyBook *self, PyObject *args)
 {
-    PyObject *val = NULL;
-    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) return NULL;
-    xlBookSetRgbMode(self->handler, PyObject_IsTrue(val) ? 1 : 0);
-    Py_RETURN_NONE;
+	PyObject *val = NULL;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &val)) return NULL;
+	xlBookSetRgbMode(self->handler, PyObject_IsTrue(val) ? 1 : 0);
+	Py_RETURN_NONE;
 }
 
 static PyObject *
 biff_version(XLPyBook *self)
 {
-    return Py_BuildValue("i", xlBookBiffVersion(self->handler));
+	return Py_BuildValue("i", xlBookBiffVersion(self->handler));
 }
 
 /*
 static PyObject *
 is_date_1904(XLPyBook *self)
 {
-    if(xlBookIsDate1904(self->handler))
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if(xlBookIsDate1904(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 set_date_1904(XLPyBook *self, PyObject *args)
 {
-    int value;
-    if(!PyArg_ParseTuple(args, "i", &value)) return NULL;
-    xlBookIsDate1904(self->handler, value);
-    Py_RETURN_NONE;
+	int value;
+	if(!PyArg_ParseTuple(args, "i", &value)) return NULL;
+	xlBookIsDate1904(self->handler, value);
+	Py_RETURN_NONE;
 }
 */
 
@@ -444,19 +444,19 @@ set_locale(XLPyBook *self, PyObject *args)
 static PyObject *
 is_template(XLPyBook *self)
 {
-    if (xlBookIsTemplate(self->handler) == 1)
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
+	if (xlBookIsTemplate(self->handler) == 1)
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject *
 set_template(XLPyBook *self, PyObject *args)
 {
-    PyObject *bool;
-    if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &bool)) return NULL;
+	PyObject *bool;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &bool)) return NULL;
 
-    xlBookSetTemplate(self->handler,PyObject_IsTrue(bool));
-    Py_RETURN_NONE;
+	xlBookSetTemplate(self->handler,PyObject_IsTrue(bool));
+	Py_RETURN_NONE;
 }
 #endif
 
@@ -516,14 +516,14 @@ static PyMethodDef methods[] = {
 		"Index must be less than return value of Book::fontSize() method."},
 	{"fontSize", (PyCFunction) font_size, METH_NOARGS,
 		"Returns a number of fonts in this book."},
-    {"datePack", (PyCFunction) date_pack, METH_VARARGS,
-        "Packs date and time information into float type."},
-    {"dateUnpack", (PyCFunction) date_unpack, METH_VARARGS,
-        "Unpacks date and time information from float type. Returns None if error occurs."},
-    {"colorPack", (PyCFunction) color_pack, METH_VARARGS,
-        "Packs red, green and blue components in color value."},
-    {"colorUnpack", (PyCFunction) color_unpack, METH_VARARGS,
-        "Unpacks color value to red, green and blue components."},
+	{"datePack", (PyCFunction) date_pack, METH_VARARGS,
+		"Packs date and time information into float type."},
+	{"dateUnpack", (PyCFunction) date_unpack, METH_VARARGS,
+		"Unpacks date and time information from float type. Returns None if error occurs."},
+	{"colorPack", (PyCFunction) color_pack, METH_VARARGS,
+		"Packs red, green and blue components in color value."},
+	{"colorUnpack", (PyCFunction) color_unpack, METH_VARARGS,
+		"Unpacks color value to red, green and blue components."},
 	{"activeSheet", (PyCFunction) active_sheet, METH_NOARGS,
 		"Returns an active sheet index in this workbook."},
 	{"setActiveSheet", (PyCFunction) set_active_sheet, METH_VARARGS,
@@ -541,49 +541,49 @@ static PyMethodDef methods[] = {
 		"Adds a picture to the workbook from memory buffer: \n"
 		"data - pointer to buffer with picture data (BMP, DIB, PNG, JPG or WMF formats);"
 		"Returns a picture identifier. Use picture identifier with Book::sheetSetPicture()"},
-    {"defaultFont", (PyCFunction) default_font, METH_NOARGS,
-        "Returns a tuple with default font name and size for this workbook. "
-        "Returns None if error occurs."},
-    {"setDefaultFont", (PyCFunction) set_default_font, METH_VARARGS,
-        "Sets a default font name and size for this workbook."},
+	{"defaultFont", (PyCFunction) default_font, METH_NOARGS,
+		"Returns a tuple with default font name and size for this workbook. "
+		"Returns None if error occurs."},
+	{"setDefaultFont", (PyCFunction) set_default_font, METH_VARARGS,
+		"Sets a default font name and size for this workbook."},
 	{"refR1C1", (PyCFunction) ref_r1_c1, METH_VARARGS,
 		"Returns whether the R1C1 reference mode is active. "
 		"Returns True if mode is active and False if isn't."},
 	{"setRefR1C1", (PyCFunction) set_ref_r1_c1, METH_VARARGS,
 		"Sets the R1C1 reference mode: True - active, False - not active."},
-    {"rgbMode", (PyCFunction) rgb_mode, METH_NOARGS,
-        "Returns whether the RGB mode is active: "
-        "True - RGB mode, False - Index mode."},
-    {"setRgbMode", (PyCFunction) set_rgb_mode, METH_VARARGS,
-        "Sets a RGB mode: True - RGB mode, False - Index mode (default). "
-        "In RGB mode use Book::ColorPack() and Book::ColorUnpack() functions for getting/setting colors."},
-    {"biffVersion", (PyCFunction) biff_version, METH_NOARGS,
-        "Returns BIFF version of binary file. Used for xls format only."},
-    /*
-    {"isDate1904", (PyCFunction) is_date_1904, METH_NOARGS,
-        "Returns whether the 1904 date system is active: "
-        "True - 1904 date system, False - 1900 date system."},
-    {"setDate1904", (PyCFunction) set_date_1904, METH_NOARGS,
-        "Sets the date system mode: True - 1904 date system, False - 1900 date system (default). "
-        "In the 1900 date base system, the lower limit is January 1, 1900, which has serial value 1. "
-        "In the 1904 date base system, the lower limit is January 1, 1904, which has serial value 0."},
-    */
+	{"rgbMode", (PyCFunction) rgb_mode, METH_NOARGS,
+		"Returns whether the RGB mode is active: "
+		"True - RGB mode, False - Index mode."},
+	{"setRgbMode", (PyCFunction) set_rgb_mode, METH_VARARGS,
+		"Sets a RGB mode: True - RGB mode, False - Index mode (default). "
+		"In RGB mode use Book::ColorPack() and Book::ColorUnpack() functions for getting/setting colors."},
+	{"biffVersion", (PyCFunction) biff_version, METH_NOARGS,
+		"Returns BIFF version of binary file. Used for xls format only."},
+	/*
+	{"isDate1904", (PyCFunction) is_date_1904, METH_NOARGS,
+		"Returns whether the 1904 date system is active: "
+		"True - 1904 date system, False - 1900 date system."},
+	{"setDate1904", (PyCFunction) set_date_1904, METH_NOARGS,
+		"Sets the date system mode: True - 1904 date system, False - 1900 date system (default). "
+		"In the 1900 date base system, the lower limit is January 1, 1900, which has serial value 1. "
+		"In the 1904 date base system, the lower limit is January 1, 1904, which has serial value 0."},
+	*/
 	{"setKey", (PyCFunction) set_key, METH_VARARGS,
 		"Sets customer's license key."},
 	{"setLocale", (PyCFunction) set_locale, METH_VARARGS,
 		"Sets the locale for this library. "
 		"The locale argument is the same as the locale argument in setlocale() function from C Run-Time Library. "
 		"For example, value \"en_US.UTF-8\" allows to use non-ascii characters in Linux or Mac. "
-        "It accepts the special value \"UTF-8\" for using UTF-8 character encoding in Windows and other operating systems. "
+		"It accepts the special value \"UTF-8\" for using UTF-8 character encoding in Windows and other operating systems. "
 		"It has no effect for unicode projects with wide strings (with _UNICODE preprocessor variable). "
 		"Returns True if a valid locale argument is given."},
 #if LIBXL_VERSION >= 0x03050401
-    {"isTemplate", (PyCFunction) is_template, METH_NOARGS,
-        "Returns whether the workbook is template:"
-        "1 - workbook is template, 0 - workbook is not template."},
-    {"setTemplate", (PyCFunction) set_template, METH_VARARGS,
-        "Sets the template flag: 1 - workbook is template, 0 - workbook is not template (default)."
-        "This flag must have a value \"true\" for template files (xlt and xltx)."},
+	{"isTemplate", (PyCFunction) is_template, METH_NOARGS,
+		"Returns whether the workbook is template:"
+		"1 - workbook is template, 0 - workbook is not template."},
+	{"setTemplate", (PyCFunction) set_template, METH_VARARGS,
+		"Sets the template flag: 1 - workbook is template, 0 - workbook is not template (default)."
+		"This flag must have a value \"true\" for template files (xlt and xltx)."},
 #endif
 	{"errorMessage", (PyCFunction) error_message, METH_NOARGS,
 		"Returns the last error message."},

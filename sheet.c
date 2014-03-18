@@ -1031,13 +1031,25 @@ static PyObject *
 get_named_range(XLPySheet *self, PyObject *args)
 {
 	const char *name;
-	if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
+#if LIBXL_VERSION >= 0x03050401
+    int scopeId = SCOPE_WORKBOOK, hidden = 0;
+
+	if(!PyArg_ParseTuple(args, "s|l", &name, &scopeId)) return NULL;
 
 	int rowFirst, rowLast, colFirst, colLast;
 	if(!xlSheetGetNamedRange(self->handler, name, &rowFirst, &rowLast,
-		&colFirst, &colLast)) Py_RETURN_NONE;
+		&colFirst, &colLast, scopeId, &hidden)) Py_RETURN_NONE;
 
-	return Py_BuildValue("(iiii)", rowFirst, rowLast, colFirst, colLast);
+	return Py_BuildValue("(iiiii)", rowFirst, rowLast, colFirst, colLast, hidden);
+#else
+    if(!PyArg_ParseTuple(args, "s|l", &name)) return NULL;
+
+    int rowFirst, rowLast, colFirst, colLast;
+    if(!xlSheetGetNamedRange(self->handler, name, &rowFirst, &rowLast,
+        &colFirst, &colLast)) Py_RETURN_NONE;
+
+    return Py_BuildValue("(iiii)", rowFirst, rowLast, colFirst, colLast);
+#endif
 }
 
 static PyObject *
@@ -1045,11 +1057,21 @@ set_named_range(XLPySheet *self, PyObject *args)
 {
 	const char *name;
 	int rowFirst, rowLast, colFirst, colLast;
-	if(!PyArg_ParseTuple(args, "siiii", &name, &rowFirst, &rowLast,
-		&colFirst, &colLast)) return NULL;
+#if LIBXL_VERSION >= 0x03050401
+    int scopeId = SCOPE_WORKBOOK;
+
+	if(!PyArg_ParseTuple(args, "siiii|i", &name, &rowFirst, &rowLast,
+		&colFirst, &colLast, &scopeId)) return NULL;
 
 	int r = xlSheetSetNamedRange(self->handler, name, rowFirst, rowLast,
-		colFirst, colLast);
+		colFirst, colLast, scopeId);
+#else
+    if(!PyArg_ParseTuple(args, "siiii", &name, &rowFirst, &rowLast,
+        &colFirst, &colLast)) return NULL;
+
+    int r = xlSheetSetNamedRange(self->handler, name, rowFirst, rowLast,
+        colFirst, colLast);
+#endif
 
 	if(!r) Py_RETURN_NONE;
 	return Py_BuildValue("i", r);
@@ -1059,9 +1081,17 @@ static PyObject *
 del_named_range(XLPySheet *self, PyObject *args)
 {
 	const char *name;
-	if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
+#if LIBXL_VERSION >= 0x03050401
+    int scopeId = SCOPE_WORKBOOK;
 
-	if(xlSheetDelNamedRange(self->handler, name)) Py_RETURN_TRUE;
+	if(!PyArg_ParseTuple(args, "s|", &name, &scopeId)) return NULL;
+
+	if(xlSheetDelNamedRange(self->handler, name, scopeId)) Py_RETURN_TRUE;
+#else
+    if(!PyArg_ParseTuple(args, "s", &name)) return NULL;
+
+    if(xlSheetDelNamedRange(self->handler, name)) Py_RETURN_TRUE;
+#endif
 	Py_RETURN_FALSE;
 }
 
@@ -1079,11 +1109,19 @@ named_range(XLPySheet *self, PyObject *args)
 	int index;
 	if(!PyArg_ParseTuple(args, "i", &index)) return NULL;
 
-	int rowFirst, rowLast, colFirst, colLast;
+#if LIBXL_VERSION >= 0x03050401
+	int rowFirst, rowLast, colFirst, colLast, hidden = 0, scopeId = SCOPE_WORKBOOK;
 	const char *range = xlSheetNamedRange(self->handler, index,
-		&rowFirst, &rowLast, &colFirst, &colLast);
+		&rowFirst, &rowLast, &colFirst, &colLast, &scopeId, &hidden);
 
-	return Py_BuildValue("(siiii)", range, rowFirst, rowLast, colFirst, colLast);
+	return Py_BuildValue("(siiiii)", range, rowFirst, rowLast, colFirst, colLast, scopeId);
+#else
+    int rowFirst, rowLast, colFirst, colLast;
+    const char *range = xlSheetNamedRange(self->handler, index,
+        &rowFirst, &rowLast, &colFirst, &colLast);
+
+    return Py_BuildValue("(siiii)", range, rowFirst, rowLast, colFirst, colLast);
+#endif
 }
 
 static PyObject *

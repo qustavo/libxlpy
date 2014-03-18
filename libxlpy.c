@@ -17,7 +17,7 @@ void initlibxlpy(void)
     PyObject* mod;
     mod = Py_InitModule3("libxlpy", NULL, "A libxl python wrapper");
     if (mod == NULL) return;
-     
+
     // Init Classes
 	INIT_TYPE(XLPyBookType);
     INIT_TYPE(XLPySheetType);
@@ -26,6 +26,8 @@ void initlibxlpy(void)
 
     // Module's Public API
     PyModule_AddObject(mod, "Book", (PyObject* )&XLPyBookType);
+    PyModule_AddIntConstant(mod, "BOOK_XLS", (int)0);
+    PyModule_AddIntConstant(mod, "BOOK_XLSX", (int)1);
 
 	ADD_INT_CONSTANT(SHEETTYPE_SHEET);
 	ADD_INT_CONSTANT(SHEETTYPE_CHART);
@@ -82,7 +84,7 @@ void initlibxlpy(void)
     ADD_INT_CONSTANT(ERRORTYPE_NUM);
     ADD_INT_CONSTANT(ERRORTYPE_NA);
     // Available on doc but not on libxl.h
-    PyModule_AddIntConstant(mod, "ERRORTYPE_NOERROR", 0xff); 
+    PyModule_AddIntConstant(mod, "ERRORTYPE_NOERROR", 0xff);
 
     ADD_INT_CONSTANT(SHEETSTATE_VISIBLE);
     ADD_INT_CONSTANT(SHEETSTATE_HIDDEN);
@@ -283,7 +285,7 @@ void initlibxlpy(void)
     ADD_INT_CONSTANT(NUMFORMAT_CUSTOM_MMSS0);
     ADD_INT_CONSTANT(NUMFORMAT_CUSTOM_000P0E_PLUS0);
     ADD_INT_CONSTANT(NUMFORMAT_TEXT);
-    
+
     ADD_INT_CONSTANT(SCRIPT_NORMAL);
     ADD_INT_CONSTANT(SCRIPT_SUPER);
     ADD_INT_CONSTANT(SCRIPT_SUB);
@@ -293,4 +295,8 @@ void initlibxlpy(void)
     ADD_INT_CONSTANT(UNDERLINE_DOUBLE);
     ADD_INT_CONSTANT(UNDERLINE_SINGLEACC);
     ADD_INT_CONSTANT(UNDERLINE_DOUBLEACC);
+#if LIBXL_VERSION >= 0x03050401
+    ADD_INT_CONSTANT(SCOPE_UNDEFINED);
+    ADD_INT_CONSTANT(SCOPE_WORKBOOK);
+#endif
 }

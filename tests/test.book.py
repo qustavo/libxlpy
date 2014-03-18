@@ -3,7 +3,7 @@ from libxlpy import *
 
 class TestBook(unittest.TestCase):
     def setUp(self):
-        self.book = Book(False)
+        self.book = Book(BOOK_XLS)
 
     def test_load(self):
         self.assertTrue(
@@ -55,7 +55,7 @@ class TestBook(unittest.TestCase):
     def test_addFont(self):
         fnt = self.book.addFont()
         self.assertEqual('XLPyFont', type(fnt).__name__)
-   
+
     def test_addCustomNumFormat(self):
         index = self.book.addCustomNumFormat("fmt");
         self.assertIsNotNone(index)
@@ -89,7 +89,7 @@ class TestBook(unittest.TestCase):
         sheet = self.book.addSheet('foobar')
         self.book.setActiveSheet(2)
         self.assertEqual(2, self.book.activeSheet())
-        
+
 
     def test_pictureSize(self):
         self.assertEqual(0, self.book.pictureSize())
@@ -99,7 +99,7 @@ class TestBook(unittest.TestCase):
     def test_getPicture(self):
         (t, img) = self.book.getPicture(0)
         self.assertEqual(255, t)
-        
+
         index = self.book.addPicture("./logo.png")
         (t, img) = self.book.getPicture(index)
         self.assertEqual(0, t)
@@ -119,7 +119,7 @@ class TestBook(unittest.TestCase):
     def test_font(self):
         font = self.book.font(0)
         self.assertEqual('XLPyFont', type(font).__name__)
-        
+
         font = self.book.font(999) # invalid font index
         self.assertIsNone(font)
 
@@ -177,7 +177,7 @@ class TestBook(unittest.TestCase):
     def test_setRgbMode(self):
         self.book.setRgbMode(True)
         self.assertTrue(self.book.rgbMode())
-        
+
         self.book.setRgbMode(False)
         self.assertFalse(self.book.rgbMode())
 
@@ -192,7 +192,7 @@ class TestBook(unittest.TestCase):
     def test_setDate1904(self):
         self.assertIsNone(self.book.setDate1904(1))
         self.assertTrue(self.book.isDate1904())
-        
+
         self.assertIsNone(self.book.setDate1904(0))
         self.assertFalse(self.book.isDate1904())
 

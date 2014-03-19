@@ -535,5 +535,12 @@ class TestSheet(unittest.TestCase):
         self.assertEqual('$C$3', self.sheet.rowColToAddr(2, 2, 0, 0))
         self.assertEqual('C3', self.sheet.rowColToAddr(2, 2, 1, 1))
 
+    def test_rightToLeft(self):
+        self.assertFalse( self.sheet.rightToLeft() )
+
+    def test_setRightToLeft(self):
+        self.sheet.setRightToLeft(True)
+        self.assertTrue( self.sheet.rightToLeft() )
+
 if __name__ == '__main__':
     unittest.main()

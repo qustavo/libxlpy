@@ -1163,6 +1163,26 @@ row_col_to_addr(XLPySheet *self, PyObject *args)
 	);
 }
 
+#if LIBXL_VERSION >= 0x03050401
+static PyObject *
+right_to_left(XLPySheet *self)
+{
+	if(xlSheetRightToLeft(self->handler))
+		Py_RETURN_TRUE;
+	Py_RETURN_FALSE;
+}
+
+static PyObject *
+set_right_to_left(XLPySheet *self, PyObject *args)
+{
+	PyObject *lefttoright;
+	if(!PyArg_ParseTuple(args, "O!", &PyBool_Type, &lefttoright)) return NULL;
+
+	xlSheetSetRightToLeft(self->handler, PyObject_IsTrue(lefttoright));
+	Py_RETURN_NONE;
+}
+#endif
+
 static PyMethodDef methods[] = {
     {"cellType", (PyCFunction) cell_type, METH_VARARGS,
         "Returns cell's type."},
@@ -1452,6 +1472,16 @@ static PyMethodDef methods[] = {
 		"Converts a cell reference to row and column."},
 	{"rowColToAddr", (PyCFunction) row_col_to_addr, METH_VARARGS,
 		"Converts row and column to a cell reference."},
+#if LIBXL_VERSION >= 0x03050401
+	{"setRightToLeft", (PyCFunction) set_right_to_left, METH_VARARGS,
+		"Sets the right-to-left mode:"
+		"true - the text is displayed in right-to-left mode,"
+		"false - the text is displayed in left-to-right mode."},
+	{"rightToLeft", (PyCFunction) right_to_left, METH_NOARGS,
+		"Returns whether the text is displayed in right-to-left mode."
+		"true - the text is displayed in right-to-left mode,"
+		"false - the text is displayed in left-to-right mode."},
+#endif
 	{NULL}
 };
 

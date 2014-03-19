@@ -3,7 +3,7 @@ from libxlpy import *
 
 class TestFont(unittest.TestCase):
     def setUp(self):
-        self.book = Book()
+        self.book = Book(BOOK_XLS)
         self.font = self.book.addFont()
 
     def testSize(self):
@@ -19,17 +19,17 @@ class TestFont(unittest.TestCase):
     def testSetItalic(self):
         self.font.setItalic(True)
         self.assertTrue(self.font.italic())
-        
+
         self.font.setItalic(False)
         self.assertFalse(self.font.italic())
-    
+
     def testStrikeOut(self):
         self.assertIsInstance(self.font.strikeOut(), bool)
 
     def testSetStrikeOut(self):
         self.font.setStrikeOut(True)
         self.assertTrue(self.font.strikeOut())
-        
+
         self.font.setStrikeOut(False)
         self.assertFalse(self.font.strikeOut())
 
@@ -39,14 +39,14 @@ class TestFont(unittest.TestCase):
     def testSetColor(self):
         self.font.setColor(COLOR_LIGHTORANGE)
         self.assertEquals(self.font.color(), COLOR_LIGHTORANGE)
-    
+
     def testBold(self):
         self.assertIsInstance(self.font.bold(), bool)
 
     def testSetBold(self):
         self.font.setBold(True)
         self.assertTrue(self.font.bold())
-        
+
         self.font.setBold(False)
         self.assertFalse(self.font.bold())
 
@@ -56,7 +56,7 @@ class TestFont(unittest.TestCase):
     def testSetScript(self):
         self.font.setScript(SCRIPT_SUPER)
         self.assertEquals(self.font.script(), SCRIPT_SUPER)
-    
+
     def testUnderline(self):
         self.assertIsInstance(self.font.underline(), int)
 

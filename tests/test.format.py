@@ -3,7 +3,7 @@ from libxlpy import *
 
 class TestFormat(unittest.TestCase):
     def setUp(self):
-        self.book = Book()
+        self.book = Book(BOOK_XLS)
         self.format = self.book.addFormat()
 
     def test_font(self):

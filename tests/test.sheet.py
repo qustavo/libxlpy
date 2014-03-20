@@ -3,7 +3,7 @@ from libxlpy import *
 
 class TestSheet(unittest.TestCase):
     def setUp(self):
-        self.book = Book()
+        self.book = Book(BOOK_XLS)
         self.sheet = self.book.addSheet('foo')
 
     def test_cellType(self):
@@ -48,7 +48,7 @@ class TestSheet(unittest.TestCase):
 
         self.assertTrue(
                 self.sheet.writeStr(1, 0, "Hello World"))
-        
+
         (txt, fmt) = self.sheet.readStr(1, 0)
         self.sheet.writeStr(1, 0, "Hello with Format", fmt)
 
@@ -83,7 +83,7 @@ class TestSheet(unittest.TestCase):
         self.assertFalse(self.sheet.writeBool(0, 0, True))
         self.assertTrue(self.sheet.writeBool(1, 1, True))
         self.assertTrue(self.sheet.writeBool(1, 1, False))
-        
+
         (val, fmt) = self.sheet.readBool(1, 1)
         self.sheet.writeBool(3, 3, True, fmt)
 
@@ -202,7 +202,7 @@ class TestSheet(unittest.TestCase):
 
     def test_getPicture(self):
         # no picture found
-        self.assertIsNone(self.sheet.getPicture(0)) 
+        self.assertIsNone(self.sheet.getPicture(0))
 
     def test_setPicture(self):
         img = self.book.addPicture('./logo.png')
@@ -246,7 +246,7 @@ class TestSheet(unittest.TestCase):
     def test_groupRows(self):
         self.assertTrue( self.sheet.groupRows(0, 10, True) )
         self.assertTrue( self.sheet.groupRows(0, 10, False) )
-    
+
     def test_groupCols(self):
         self.assertTrue( self.sheet.groupCols(0, 10, True) )
         self.assertTrue( self.sheet.groupCols(0, 10, False) )
@@ -257,7 +257,7 @@ class TestSheet(unittest.TestCase):
     def test_setGroupSummaryBelow(self):
         self.sheet.setGroupSummaryBelow(False)
         self.assertFalse( self.sheet.groupSummaryBelow() )
-        
+
         self.sheet.setGroupSummaryBelow(True)
         self.assertTrue( self.sheet.groupSummaryBelow() )
 
@@ -267,7 +267,7 @@ class TestSheet(unittest.TestCase):
     def test_setGroupSummaryRight(self):
         self.sheet.setGroupSummaryRight(False)
         self.assertFalse( self.sheet.groupSummaryRight() )
-        
+
         self.sheet.setGroupSummaryRight(True)
         self.assertTrue( self.sheet.groupSummaryRight() )
 
@@ -345,17 +345,17 @@ class TestSheet(unittest.TestCase):
     def test_setDisplayGridlines(self):
         self.sheet.setDisplayGridlines(True)
         self.assertTrue(self.sheet.displayGridlines())
-        
+
         self.sheet.setDisplayGridlines(False)
         self.assertFalse(self.sheet.displayGridlines())
-    
+
     def test_printGridlines(self):
         self.assertIsInstance(self.sheet.printGridlines(), bool)
 
     def test_setPrintGridlines(self):
         self.sheet.setPrintGridlines(True)
         self.assertTrue(self.sheet.printGridlines())
-        
+
         self.sheet.setPrintGridlines(False)
         self.assertFalse(self.sheet.printGridlines())
 
@@ -384,7 +384,7 @@ class TestSheet(unittest.TestCase):
         self.assertFalse(self.sheet.landscape())
 
     def test_paper(self):
-        self.assertEquals(self.sheet.paper(), PAPER_DEFAULT) 
+        self.assertEquals(self.sheet.paper(), PAPER_DEFAULT)
 
     def test_setPaper(self):
         self.sheet.setPaper(PAPER_FOLIO)
@@ -397,7 +397,7 @@ class TestSheet(unittest.TestCase):
         hdr = "Header Text"
         self.sheet.setHeader(hdr, 10)
         self.assertEquals(hdr, self.sheet.header())
-    
+
     def test_headerMargin(self):
         self.assertIsInstance(self.sheet.headerMargin(), float)
 
@@ -412,7 +412,7 @@ class TestSheet(unittest.TestCase):
         ftr = "Footer Text"
         self.sheet.setFooter(ftr, 10)
         self.assertEquals(ftr, self.sheet.footer())
-    
+
     def test_footerMargin(self):
         self.assertIsInstance(self.sheet.footerMargin(), float)
 
@@ -448,7 +448,7 @@ class TestSheet(unittest.TestCase):
 
         self.sheet.setMarginRight(margin)
         self.assertEquals(margin, self.sheet.marginRight())
-        
+
         self.sheet.setMarginTop(margin)
         self.assertEquals(margin, self.sheet.marginTop())
 
@@ -486,7 +486,7 @@ class TestSheet(unittest.TestCase):
     def test_setNamedRange(self):
         self.assertTrue(self.sheet.setNamedRange("foo", 0, 10, 0, 10))
         self.assertEqual(1, self.sheet.namedRangeSize())
-        self.assertEqual( ("foo", 0, 10, 0, 10), self.sheet.namedRange(0) )
+        self.assertEqual( ("foo", 0, 10, 0, 10, -1), self.sheet.namedRange(0) )
 
     def test_delNamedRange(self):
         self.assertFalse(self.sheet.delNamedRange('foo'))
@@ -534,6 +534,13 @@ class TestSheet(unittest.TestCase):
         self.assertEqual('A1', self.sheet.rowColToAddr(0, 0, 1, 1))
         self.assertEqual('$C$3', self.sheet.rowColToAddr(2, 2, 0, 0))
         self.assertEqual('C3', self.sheet.rowColToAddr(2, 2, 1, 1))
+
+    def test_rightToLeft(self):
+        self.assertFalse( self.sheet.rightToLeft() )
+
+    def test_setRightToLeft(self):
+        self.sheet.setRightToLeft(True)
+        self.assertTrue( self.sheet.rightToLeft() )
 
 if __name__ == '__main__':
     unittest.main()

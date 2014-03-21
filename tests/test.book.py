@@ -211,11 +211,11 @@ class TestBook(unittest.TestCase):
         self.assertNotEqual('ok', self.book.errorMessage())
 
     def test_isTemplate(self):
-        self.assertEqual(0, self.book.isTemplate())
+        self.assertFalse(self.book.isTemplate())
 
     def test_setTemplate(self):
         self.book.setTemplate(True)
-        self.assertEqual(1, self.book.isTemplate())
+        self.assertTrue(self.book.isTemplate())
 
 
 if __name__ == '__main__':
